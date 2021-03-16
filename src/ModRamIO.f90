@@ -384,6 +384,64 @@ subroutine read_geomlt_file(NameParticle)
 end subroutine read_geomlt_file
 
 !===========================================================================
+subroutine read_swf_file(iSpecies)
+   use ModRamMain,   ONLY: PathSwmfOut
+   use ModIoUnit,    ONLY: UnitTmp_
+   use ModRamGrids,  ONLY: nT, nE,nS
+   use ModRamTiming, ONLY: TimeRamElapsed
+   use ModRamCouple, ONLY: FluxBats_IIS
+
+   implicit none
+    
+   integer, intent(in) :: iSpecies
+
+   integer :: iT, nFile
+   character(len=22)  :: StringFormat
+   character(len=100) :: NameFile, StringHeaderIn
+    
+   logical :: DoTest, DoTestMe
+   character(len=*), parameter :: NameSub = 'read_swf_file'
+   !------------------------------------------------------------------------
+   call CON_set_do_test(NameSub, DoTest, DoTestMe)
+    
+   ! Check if FluxBats_IIS has been allocated.  Allocate if necessary.
+   if(.not. allocated(FluxBats_IIS)) allocate(FluxBats_IIS(nE,nT,nS))
+
+   ! Initialize FluxBats_IIS:
+   FluxBats_IIS(:,:,iSpecies) = 0.0
+
+   ! Get file number via number of elapsed 5-minute intervals:
+   nFile = nint(TimeRamElapsed/300.0)
+
+   ! Set format code for reading data based on number of energy bins:
+   write(StringFormat,'(a,i2,a)') '(17x, ', nE, '(1x, 1pE11.4))'
+   if(DoTestMe) write(*,*)'IM: '//NameSub//' Format string = '//StringFormat
+
+   ! Write one file for each species.
+   ! Get file name for current species, open file:
+   write(NameFile,'(a,i4.4,a,i1.1,a)')  &
+      PathSwmfOut//"Final_",nFile,"_",iSpecies,".swf"
+   open(UnitTmp_, FILE=NameFile, ACTION='read')
+   if(DoTestMe)write(*,*)'IM: '//NameSub//' opening file '//NameFile
+   ! Skip header:
+   read(UnitTmp_, *) StringHeaderIn
+   ! Read rest of file:
+   do iT=1, nT
+      read(UnitTmp_,StringFormat) FluxBats_IIS(:,iT,iSpecies)
+   end do
+   close(UnitTmp_)
+   
+   ! Check integrety of read:
+   if(DoTestMe)then
+      write(*,*)'IM: '//NameSub//' first and last SWF fluxes for iSpecies',iSpecies
+      write(*,*)FluxBats_IIS(:, 1,iSpecies)
+      write(*,*)''
+      write(*,*)FluxBats_IIS(:,nT,iSpecies)
+   endif
+
+end subroutine read_swf_file
+
+!===========================================================================
   subroutine read_hI_file
      !!!! Module Variables
      use ModRamMain,      ONLY: PathScbIn

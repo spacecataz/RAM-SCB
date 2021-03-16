@@ -250,7 +250,7 @@ end subroutine get_geomlt_flux
     use ModRamCouple,    ONLY: FluxBats_IIS
 
 !!!! Module Subroutines and Functions
-    use ModRamIO, ONLY: write_dsbnd
+    use ModRamIO, ONLY: write_dsbnd, read_swf_file
 
     implicit none
     integer, intent(in) :: S
@@ -296,6 +296,9 @@ end subroutine get_geomlt_flux
 
     ELSEIF (boundary .EQ. 'SWMF') THEN
       !! Read SWMF flux (1/cm2/s/sr/keV) assumed isotropic
+      ! Read the .swf files if standalone:
+      if(.not.IsComponent) call read_swf_file(s)
+      ! Turn fluxes into phase space density:
       do iK=1, nE
         do iJ=1,nT
           u = int(UPA(NR)-1,kind=4)
