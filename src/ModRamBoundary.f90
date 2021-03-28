@@ -23,7 +23,7 @@ subroutine get_boundary_flux
   use ModRamIO,     ONLY: write_prefix
 
   implicit none
- 
+
   integer :: iS
 
   ! Update boundary conditions and wave diffusion matrix
@@ -129,7 +129,7 @@ subroutine get_geomlt_flux(NameParticleIn, fluxOut_II)
      if (abs(TimeRamElapsed-tGrid_SI(iSpec,i)).le.1e-9) then
         iTime2 = i
         iTime1 = i
-        exit  
+        exit
      elseif (TimeRamElapsed.lt.tGrid_SI(iSpec,i)) then
         iTime2 = i
         iTime1 = max(1,i-1)
@@ -161,7 +161,7 @@ subroutine get_geomlt_flux(NameParticleIn, fluxOut_II)
      enddo
   endif
 
-  ! If needed, extrapolate to lower and higher energies 
+  ! If needed, extrapolate to lower and higher energies
   ! (for now just set to 10^8 and 0.1 for testing)
   if (lE.eq.1) then
      do j=1,NTL-1
@@ -250,7 +250,7 @@ end subroutine get_geomlt_flux
     use ModRamCouple,    ONLY: FluxBats_IIS
 
 !!!! Module Subroutines and Functions
-    use ModRamIO, ONLY: write_dsbnd, read_swf_file
+    use ModRamIO, ONLY: write_dsbnd
 
     implicit none
     integer, intent(in) :: S
@@ -296,9 +296,8 @@ end subroutine get_geomlt_flux
 
     ELSEIF (boundary .EQ. 'SWMF') THEN
       !! Read SWMF flux (1/cm2/s/sr/keV) assumed isotropic
-      ! Read the .swf files if standalone:
-      if(.not.IsComponent) call read_swf_file(s)
-      ! Turn fluxes into phase space density:
+      ! Read the .swf files if standalone. Someone removed the part we need!! WHY!?
+
       do iK=1, nE
         do iJ=1,nT
           u = int(UPA(NR)-1,kind=4)
