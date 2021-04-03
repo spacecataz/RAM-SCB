@@ -15,7 +15,7 @@ module ModRamInjection
      use ModRamVariables, ONLY: Lz, Phi, EkeV, Mu, dE, dMu, PA, RFactor, &
                                 FFactor, FNHS, species
      use ModScbVariables, ONLY: bnormal
- 
+
      use ModIoUnit,       ONLY: UNITTMP_
 
      use nrtype, ONLY: pi_d, twopi_d
@@ -40,6 +40,9 @@ module ModRamInjection
      den1 = -1.0
 
      filename = trim(PathRamIn)//fname
+     write(*,*) "The PathRamIn is",PathRamIn
+     write(*,*) "The fname is ", fname
+     write(*,*) "The Final filename is ",filename
      OPEN(UNITTMP_,FILE=trim(filename),STATUS='OLD')
      READ(UNITTMP_,'(A)') HEADER
      read_file: do
@@ -92,7 +95,7 @@ module ModRamInjection
           endif
         enddo
 
-        ! Add the number density to the grid assuming a maxwellian distribution in energy 
+        ! Add the number density to the grid assuming a maxwellian distribution in energy
         factor = 4.0E6*EkeV(iE)
         den = 1._dp/sqrt(species(S)%s_mass)*exp(-1._dp*EkeV(iE)/energy)*factor*den*energy**(-1.5)
         !den = FFactor(S,iR,iE,iPa)*FNHS(iR,iT,iPa)*den/dE(iE)/dMu(iPa)

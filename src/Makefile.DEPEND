@@ -1,0 +1,417 @@
+ModRamSpecies.o:\
+	ModRamMain.o
+
+ModRamBoundary.o:\
+	ModRamVariables.o \
+	ModRamGrids.o \
+	ModRamTiming.o \
+	ModRamParams.o \
+	ModRamIO.o \
+	ModRamMain.o \
+	ModRamGSL.o \
+	ModRamCouple.o
+
+ModRamConst.o:\
+	ModRamMain.o
+
+ModRamDrift.o:\
+	ModRamMain.o \
+	ModRamGrids.o \
+	ModRamVariables.o \
+	ModRamConst.o \
+	ModRamTiming.o \
+	ModRamParams.o
+
+ModRamEField.o:\
+	ModRamMain.o \
+	ModRamTiming.o \
+	ModRamConst.o \
+	ModRamParams.o \
+	ModRamGrids.o \
+	ModRamVariables.o \
+	ModRamIO.o \
+	ModRamFunctions.o \
+	ModRamGSL.o \
+	ModScbMain.o \
+	ModScbGrids.o \
+	ModScbVariables.o \
+	nrtype.o \
+	ModSceGrids.o \
+	ModSceVariables.o \
+	ModRamCouple.o \
+	ModScbIO.o \
+	ModSceRun.o
+
+ModRamFunctions.o:\
+	ModRamMain.o \
+	ModRamGrids.o \
+	ModRamVariables.o \
+	ModRamConst.o \
+	nrtype.o
+
+ModRamGrids.o:\
+	nrtype.o
+
+ModRamIndices.o:\
+	ModRamMain.o \
+	ModRamVariables.o \
+	ModRamParams.o \
+	ModRamGrids.o
+
+ModRamInit.o:\
+	ModRamVariables.o \
+	ModRamParams.o \
+	ModRamSpecies.o \
+	ModRamGrids.o \
+	ModScbGrids.o \
+	ModRamIO.o \
+	ModRamMain.o \
+	ModRamTiming.o \
+	ModScbVariables.o \
+	ModRamWPI.o \
+	ModRamIndices.o \
+	ModRamConst.o \
+	ModRamFunctions.o \
+	ModScbParams.o \
+	ModRamRun.o \
+	ModRamBoundary.o \
+	ModRamRestart.o \
+	ModRamInjection.o \
+	ModRamScb.o \
+	ModScbRun.o \
+	ModScbEuler.o \
+	ModScbIO.o \
+	ModScbCompute.o \
+	ModRamPlasmasphere.o
+
+ModRamIO.o:\
+	ModRamParams.o \
+	ModRamTiming.o \
+	ModRamSats.o \
+	ModRamMain.o \
+	ModRamGrids.o \
+	ModRamVariables.o \
+	ModScbVariables.o \
+	ModRamFunctions.o \
+	ModRamRestart.o \
+	ModScbIO.o \
+	ModRamCouple.o \
+	nrtype.o \
+	ModRamSpecies.o \
+	ModRamGSL.o \
+	ModRamNCDF.o \
+	ModRamConst.o
+
+ModRamLoss.o:\
+	ModRamMain.o \
+	ModRamGrids.o \
+	ModRamTiming.o \
+	ModRamVariables.o \
+	ModRamIO.o \
+	ModRamGSL.o \
+	ModRamConst.o \
+	ModScbMain.o \
+	ModScbGrids.o \
+	ModScbVariables.o \
+	ModRamParams.o
+
+ModRamMain.o:\
+	nrtype.o \
+	ModRamGrids.o
+
+ModRamNCDF.o:\
+	ModRamTiming.o \
+	ModRamParams.o
+
+ModRamParams.o:\
+	ModRamMain.o
+
+ModRamRestart.o:\
+	ModRamParams.o \
+	ModRamMain.o \
+	ModRamFunctions.o \
+	ModRamTiming.o \
+	ModRamGrids.o \
+	ModRamVariables.o \
+	ModScbGrids.o \
+	ModScbParams.o \
+	ModScbVariables.o \
+	ModRamNCDF.o \
+	nrtype.o
+
+ModRamRun.o:\
+	ModRamMain.o \
+	ModRamParams.o \
+	ModRamConst.o \
+	ModRamGrids.o \
+	ModRamTiming.o \
+	ModRamVariables.o \
+	ModRamPlasmasphere.o \
+	ModRamDrift.o \
+	ModRamLoss.o \
+	ModRamWPI.o \
+	ModRamCoul.o \
+	ModRamGSL.o \
+	ModRamFunctions.o
+
+ModRamSats.o:\
+	ModRamMain.o \
+	ModRamParams.o \
+	ModRamTiming.o \
+	ModRamFunctions.o \
+	ModRamGrids.o \
+	ModRamVariables.o \
+	ModRamNCDF.o \
+	ModScbGrids.o \
+	ModScbVariables.o \
+	ModRamScb.o \
+	ModRamGSL.o
+
+ModRamTiming.o:\
+	ModRamMain.o \
+	ModRamParams.o
+
+ModRamVariables.o:\
+	ModRamSpecies.o \
+	ModRamGrids.o \
+	nrtype.o
+
+ModRamCoul.o:\
+	ModRamConst.o \
+	ModRamMain.o \
+	ModRamGrids.o \
+	ModRamTiming.o \
+	ModRamVariables.o \
+	ModRamSpecies.o \
+	ModRamFunctions.o \
+	ModRamParams.o
+
+ModRamWPI.o:\
+	ModRamMain.o \
+	ModRamGrids.o \
+	ModRamVariables.o \
+	ModRamConst.o \
+	ModRamFunctions.o \
+	ModRamGSL.o \
+	ModRamParams.o \
+	ModRamTiming.o
+
+ModRamInjection.o:\
+	ModRamMain.o \
+	ModRamConst.o \
+	ModRamGrids.o \
+	ModRamVariables.o \
+	ModScbVariables.o \
+	nrtype.o
+
+IM_set_parameters.o:\
+	ModRamMain.o \
+	ModRamGrids.o \
+	ModRamVariables.o \
+	ModRamTiming.o \
+	ModScbGrids.o \
+	ModRamParams.o \
+	ModScbParams.o \
+	ModRamIO.o \
+	ModRamSats.o
+
+ModScbEquation.o:\
+	ModRamParams.o \
+	ModScbMain.o \
+	ModScbGrids.o \
+	ModScbVariables.o \
+	ModRamGSL.o \
+	ModScbParams.o
+
+ModScbEuler.o:\
+	ModScbGrids.o \
+	ModScbVariables.o \
+	ModRamGSL.o \
+	nrtype.o \
+	ModScbMain.o \
+	ModRamParams.o \
+	ModScbParams.o \
+	ModScbFunctions.o
+
+ModScbFunctions.o:\
+	nrtype.o \
+	ModScbMain.o \
+	ModScbParams.o
+
+ModScbGrids.o:\
+	nrtype.o
+
+ModScbInit.o:\
+	ModRamGrids.o \
+	ModScbMain.o \
+	ModScbGrids.o \
+	ModScbVariables.o \
+	ModScbParams.o \
+	ModRamFunctions.o \
+	ModRamScb.o \
+	ModScbRun.o \
+	ModScbEuler.o \
+	ModScbIO.o \
+	nrtype.o
+
+ModScbIO.o:\
+	nrtype.o \
+	ModRamVariables.o \
+	ModRamParams.o \
+	ModRamTiming.o \
+	ModRamGrids.o \
+	ModScbParams.o \
+	ModScbGrids.o \
+	ModScbVariables.o \
+	ModRamCouple.o \
+	ModRamGSL.o \
+	ModRamFunctions.o \
+	ModScbEuler.o \
+	ModScbFunctions.o \
+	ModScbCompute.o \
+	ModRamMain.o \
+	ModScbMain.o \
+	ModScbEquation.o
+
+ModScbMain.o:\
+	nrtype.o \
+	ModRamMain.o
+
+ModScbParams.o:\
+	ModScbMain.o
+
+ModScbRun.o:\
+	ModRamParams.o \
+	ModRamVariables.o \
+	ModScbMain.o \
+	ModScbGrids.o \
+	ModScbVariables.o \
+	ModScbParams.o \
+	ModScbCompute.o \
+	ModScbEuler.o \
+	ModScbEquation.o \
+	ModScbIO.o \
+	nrtype.o \
+	ModRamGSL.o \
+	ModScbFunctions.o \
+	ModRamGrids.o \
+	ModRamCouple.o
+
+ModScbVariables.o:\
+	nrtype.o
+
+ModScbCompute.o:\
+	ModRamParams.o \
+	ModScbMain.o \
+	ModScbParams.o \
+	ModScbGrids.o \
+	ModScbVariables.o \
+	ModRamGSL.o \
+	nrtype.o
+
+ModSceVariables.o:\
+	nrtype.o
+
+ModSceInit.o:\
+	ModSceGrids.o \
+	ModSceVariables.o \
+	nrtype.o
+
+ModSceRun.o:\
+	ModRamTiming.o \
+	ModSceVariables.o \
+	ModScbVariables.o \
+	ModSceGrids.o \
+	ModSceIono.o \
+	ModRamSce.o \
+	nrtype.o
+
+ModSceIono.o:\
+	nrtype.o \
+	ModSceGrids.o \
+	ModSceVariables.o \
+	ModRamVariables.o \
+	ModRamTiming.o \
+	ModRamMain.o \
+	ModRamParams.o \
+	ModRamConst.o \
+	ModScbVariables.o
+
+ModRamGSL.o:\
+	nrtype.o
+
+RamGSL.o:\
+	/usr//include/math.h
+
+ModRamScbRun.o:\
+	ModRamMain.o \
+	ModRamParams.o \
+	ModRamTiming.o \
+	ModRamVariables.o \
+	ModScbVariables.o \
+	ModScbParams.o \
+	ModRamGSL.o \
+	ModRamFunctions.o \
+	ModRamIndices.o \
+	ModRamIO.o \
+	ModRamRestart.o \
+	ModRamInit.o \
+	ModRamRun.o \
+	ModRamBoundary.o \
+	ModRamEField.o \
+	ModScbInit.o \
+	ModScbRun.o \
+	ModScbIO.o \
+	ModSceInit.o \
+	ModRamScb.o
+
+ModRamScb.o:\
+	nrtype.o \
+	ModRamGrids.o \
+	ModScbGrids.o \
+	ModRamVariables.o \
+	ModScbVariables.o \
+	ModRamGSL.o \
+	ModScbFunctions.o \
+	ModRamTiming.o \
+	ModRamConst.o \
+	ModRamParams.o \
+	ModScbParams.o \
+	ModRamCouple.o \
+	ModRamFunctions.o \
+	ModScbIO.o
+
+ModRamSce.o:\
+	ModRamMain.o \
+	ModRamGrids.o \
+	ModRamVariables.o \
+	ModScbGrids.o \
+	ModScbVariables.o \
+	ModRamGSL.o \
+	ModScbFunctions.o \
+	nrtype.o
+
+ModRamCouple.o:\
+	ModRamMain.o \
+	ModRamGrids.o \
+	ModRamTiming.o \
+	ModRamVariables.o \
+	ModRamParams.o \
+	ModRamConst.o \
+	ModRamFunctions.o \
+	ModScbParams.o \
+	ModScbGrids.o \
+	ModScbVariables.o \
+	ModRamGSL.o \
+	ModScbEuler.o \
+	nrtype.o
+
+ModRamPlasmasphere.o:\
+	ModRamMain.o \
+	ModRamParams.o \
+	ModRamTiming.o \
+	ModRamVariables.o \
+	ModRamGrids.o \
+	ModRamConst.o \
+	nrtype.o
+

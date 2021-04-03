@@ -7,7 +7,7 @@ module ModRamIO
 
   implicit none
 
-  logical :: IsFramework = .false. 
+  logical :: IsFramework = .false.
 
   ! File output names and units
   integer :: iUnitLog ! Logfile IO unit
@@ -16,9 +16,9 @@ module ModRamIO
   ! String that contains the date and time for which this simulation
   ! was initialized (used for output metadata.)
   character(len=21) :: StringRunDate
-  
+
   character(len=10), parameter :: NameMod = 'ModRamMain'
-  
+
   contains
 !============================!
 !===== BASE SUBROUTINES =====!
@@ -40,7 +40,7 @@ module ModRamIO
   function RamFileName(PrefixIn, SuffixIn, TimeIn)
     ! Create a file name using the new RAM-SCB I/O filename standards:
     ! FileNameOut = PrefixIn_dYYYYMMDD_tHHMMSS.SuffixIn
-    ! PrefixIn and SuffixIn are short, descriptive strings (e.g. 
+    ! PrefixIn and SuffixIn are short, descriptive strings (e.g.
     ! 'pressure', 'ram_o' for prefixes and 'dat', 'cdf' for suffixes.
 
     use ModTimeConvert, ONLY: TimeType
@@ -113,7 +113,7 @@ module ModRamIO
                                TimeRamElapsed, DtW_Pressure, DtW_hI, DtW_Efield, &
                                DtW_MAGxyz, DtLogFile, DtW_2DFlux, DtW_Losses
     use ModRamGrids,     ONLY: NR, NT, nS
-    use ModRamVariables, ONLY: PParT, PPerT, VT, ESUM,  NSUM,  LSDR,  LSCHA, & 
+    use ModRamVariables, ONLY: PParT, PPerT, VT, ESUM,  NSUM,  LSDR,  LSCHA, &
                                LSATM, LSCOE,  LSCSC,  LSWAE
     use ModScbVariables, ONLY: DstBiot, DstBiotInsideGeo, DstDPS, DstDPSInsideGeo
     !!!! Module Subroutines/Functions
@@ -372,7 +372,7 @@ subroutine read_geomlt_file(NameParticle)
      TimeBoundary % FracSecond = 0.0
      call time_int_to_real(TimeBoundary)
      tGrid_SI(iSpec,i) = TimeBoundary % Time - TimeRamStart % Time
-  enddo 
+  enddo
 
   ! Finally, store last entry into fluxLast_SII.
   fluxLast_SII(iSpec,:,:) = flux_SIII(iSpec,NBD,:,:)
@@ -392,18 +392,18 @@ subroutine read_swf_file(iSpecies)
    use ModRamCouple, ONLY: FluxBats_IIS
 
    implicit none
-    
+
    integer, intent(in) :: iSpecies
 
    integer :: iT, nFile
    character(len=22)  :: StringFormat
    character(len=100) :: NameFile, StringHeaderIn
-    
+
    logical :: DoTest, DoTestMe
    character(len=*), parameter :: NameSub = 'read_swf_file'
    !------------------------------------------------------------------------
    call CON_set_do_test(NameSub, DoTest, DoTestMe)
-    
+
    ! Check if FluxBats_IIS has been allocated.  Allocate if necessary.
    if(.not. allocated(FluxBats_IIS)) allocate(FluxBats_IIS(nE,nT,nS))
 
@@ -420,17 +420,18 @@ subroutine read_swf_file(iSpecies)
    ! Write one file for each species.
    ! Get file name for current species, open file:
    write(NameFile,'(a,i4.4,a,i1.1,a)')  &
-      PathSwmfOut//"Final_",nFile,"_",iSpecies,".swf"
+      PathSwmfOut//"SWMF_RAM_",nFile,"_",iSpecies,".swf"
    open(UnitTmp_, FILE=NameFile, ACTION='read')
    if(DoTestMe)write(*,*)'IM: '//NameSub//' opening file '//NameFile
    ! Skip header:
    read(UnitTmp_, *) StringHeaderIn
    ! Read rest of file:
    do iT=1, nT
+      write(*,*) 'nT, iT =', nT, iT
       read(UnitTmp_,StringFormat) FluxBats_IIS(:,iT,iSpecies)
    end do
    close(UnitTmp_)
-   
+
    ! Check integrety of read:
    if(DoTestMe)then
       write(*,*)'IM: '//NameSub//' first and last SWF fluxes for iSpecies',iSpecies
@@ -546,7 +547,7 @@ end subroutine read_swf_file
     REAL(DP), allocatable :: Sig(:)
 
     character(len=100) :: NameFile, tempStr
-    character(len=2)   :: tempSpc 
+    character(len=2)   :: tempSpc
     logical :: exists
     integer :: i, j, nLines, nTypes, nH, nO, nN, nChar
 
@@ -751,7 +752,7 @@ end subroutine read_swf_file
        do iS=1,nS
           CALL GSL_Interpolation_2D(iLz(1:iR), iMLT, iPParT(iS,:,:), radGrid(1:nR,:), &
                                     angleGrid(1:nR,:), PParT(iS,:,:), GSLerr)
-          CALL GSL_Interpolation_2D(iLz(1:iR), iMLT, iPPerT(iS,:,:), radGrid(1:nR,:), & 
+          CALL GSL_Interpolation_2D(iLz(1:iR), iMLT, iPPerT(iS,:,:), radGrid(1:nR,:), &
                                     angleGrid(1:nR,:), PPerT(iS,:,:), GSLerr)
        enddo
        do l=1,nPa
@@ -1039,7 +1040,7 @@ end subroutine read_swf_file
     character(len=300) :: NameFileOut
     integer :: i, j
     real(DP) :: T
-   
+
     T = TimeRamElapsed
     write(StringDate,"(i4.4,'-',i2.2,'-',i2.2,'_',i2.2,2(':',i2.2))") &
           TimeRamNow%iYear, TimeRamNow%iMonth, TimeRamNow%iDay, &
@@ -1190,12 +1191,12 @@ end subroutine read_swf_file
 	   DO  I=1,NR
 	     K=(I-2)*IR1+3
 	   DO  J=1,NT
-	     L=(J-1)*IP1	  
+	     L=(J-1)*IP1
 !             WRITE(UNITTMP_,70) LZ(I),PHI(J),NECR(K,L)	! CRasm model
              WRITE(UNITTMP_,70) LZ(I),PHI(J),NECR(I,J)	! Carpenter model
 	   ENDDO
 	   ENDDO
-70	FORMAT(F5.2,F10.6,E13.4) 	
+70	FORMAT(F5.2,F10.6,E13.4)
 96	   FORMAT(2HT=,F6.2,4H Kp=,F5.2,4H AP=,F7.2,4H Rs=,F7.2,7H Date= ,A23,&
            ' Plasmasphere e- density [cm-3]')
 	   CLOSE(UNITTMP_)
@@ -1330,5 +1331,5 @@ subroutine write_dsbnd(S)
 end Subroutine write_dsbnd
 
 !==============================================================================
-    
+
 END MODULE ModRamIO

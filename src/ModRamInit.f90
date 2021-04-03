@@ -12,7 +12,7 @@ MODULE ModRamInit
 !==============================================================================
   subroutine ram_allocate
     ! Allocate arrays for variables used in RAM calculations
-  
+
     use ModRamVariables ! Need to allocate and initialize all the variables
     use ModRamParams,    ONLY: IsComponent, FixedComposition
     use ModRamSpecies,   ONLY: RAMSpecies, nSpecies
@@ -23,7 +23,7 @@ MODULE ModRamInit
     use ModScbGrids,     ONLY: nthe
 
     use ModRamIO,        ONLY: read_CHEX_file
- 
+
     implicit none
 
     character(len=100) :: tempStr
@@ -34,7 +34,7 @@ MODULE ModRamInit
     character(len=*), parameter :: NameSub='ram_allocate'
     !-------------------------------------------------------------------------
     call CON_set_do_test(NameSub, DoTest, DoTestMe)
-    
+
     ! Determine max size of grid for full SCB coverage via SWMF:
     nRExtend = (nR-1)*(RadMaxScb-RadiusMin)/(RadiusMax-RadiusMin) + 1
     nX = NPA
@@ -61,7 +61,7 @@ MODULE ModRamInit
        enddo
        tempStr = trim(tempStr(nChar+1:len(tempStr)))
     enddo
-   
+
   !!!!!!!! Allocate Arrays
   ! Initialization of variables is not strictly needed for modern compilers,
   ! but it removes any potential ambiguity
@@ -150,17 +150,17 @@ MODULE ModRamInit
     ATAC = 0._dp; ATEC = 0._dp; XNE = 0._dp; ATMC = 0._dp; ATAW_emic_h = 0._dp; ATAW_emic_he = 0._dp;
     NECR = 0._dp; ESUM = 0._dp; NSUM = 0._dp
   !!!!!!!!!
-  
+
   end subroutine ram_allocate
 
 !==================================================================================================
   subroutine ram_deallocate
     ! Deallocate all allocated arrays for cleanup
- 
+
     use ModRamVariables ! Need to deallocate all variables
- 
+
     implicit none
-  
+
   !!!!!!!! Deallocate Arrays
     DEALLOCATE(outsideMGNP)
     DEALLOCATE(species)
@@ -192,8 +192,8 @@ MODULE ModRamInit
                LNCN, LNCD, LECN, LECD, ENERN, ENERD, ATEW, ATAW, ATAC, ATEC, &
                XNE, ATMC, ATAW_emic_h, ATAW_emic_he,ESUM, NSUM)
   !!!!!!!!!
- 
- 
+
+
   end subroutine ram_deallocate
 
 !==================================================================================================
@@ -219,14 +219,14 @@ MODULE ModRamInit
     !!!! Share Modules
     use ModTimeConvert, ONLY: TimeType, time_real_to_int, time_int_to_real
     use ModNumConst,    ONLY: cTwoPi
-    use ModIOUnit,      ONLY: UNITTMP_ 
+    use ModIOUnit,      ONLY: UNITTMP_
 
     implicit none
-  
+
     type(timetype) :: TimeRamStop
-  
+
     real(DP) :: dPh
-  
+
     integer :: iR, iPhi, j, k, iS
     integer :: nrIn, ntIn, neIn, npaIn
     logical :: TempLogical
@@ -279,7 +279,7 @@ MODULE ModRamInit
     call time_real_to_int(TimeRamStop)
     call init_indices(TimeRamRealStart, TimeRamStop)
     call get_indices(TimeRamNow%Time, Kp, f107, AE)
-  
+
   !!!!!!!!! Zero Values
     ! Initial loss is zero
     LNCN  = 0._dp; LNCD  = 0._dp
@@ -292,24 +292,24 @@ MODULE ModRamInit
     LSWAE = 0._dp
     ELORC = 0._dp
     SETRC = 0._dp
-    
+
     ! Initial energy and density
     XNN   = 0._dp; XND   = 0._dp; NSUM = 0._dp
     ENERN = 0._dp; ENERD = 0._dp; ESUM = 0._dp
   !!!!!!!!!
-  
+
   !!!!!!!!!! Initialize grid.
     ! Radial distance
     dR = (RadiusMax - RadiusMin)/(nR - 1)
     do iR = 1, nR+1 ! DANGER WE SHOULD CHANGE THIS AND ALL ARRAYS USING NR+1
        Lz(iR) = RadiusMin + (iR - 1)*dR
     end do
-  
+
     ! Create extended radial grid for coupling:
     do iR=1, nRextend
        GridExtend(iR) = RadiusMin + (iR-1)*dR
     end do
-  
+
     ! Longitude in radians
     dPh = cTwoPi/(nT - 1)
     do iPhi = 1, nT
@@ -470,7 +470,7 @@ MODULE ModRamInit
 
     ! PA is equatorial pitch angle in deg - PA(1)=90, PA(NPA)=0.
     ! MU is cosine of equatorial PA
-                         ! |_._|___.___|____.____|______.______| 
+                         ! |_._|___.___|____.____|______.______|
                          !   MU    <  DMU   >    <     WMU     >
     if (nPa == 90) then
       PA(1)=90.
@@ -574,7 +574,7 @@ MODULE ModRamInit
       FACGR(S,K)=GREL(S,K)*SQRT((GREL(S,K)-1.)*(GREL(S,K)+1.))
     END DO
 
-    ! to keep F constant at boundary 
+    ! to keep F constant at boundary
     CONF1=((LZ(NR)+DL1)/LZ(NR))**2
     CONF2=((LZ(NR)+2.*DL1)/LZ(NR))**2
 
@@ -613,32 +613,32 @@ MODULE ModRamInit
     !!!! Share Modules
     use ModIOUnit,      ONLY: UNITTMP_
     use ModTimeConvert, ONLY: TimeType
-  
+
     implicit none
-  
+
     integer :: i, j, j1, i1, iS, methodTemp
-  
+
     character(len=4)   :: NameBoundMagTemp
     character(len=100) :: pmt
     character(len=100) :: HEADER
     character(len=*), parameter :: NameSub='init_input'
-  
-  
+
+
     !!!!!!!!!! Restart vs Initial Run
     if(IsRestart) then
        ! If Restart, read restart params and set timings appropriately.
        if (IsStarttimeSet) call CON_stop(NameSub//&
             ': Cannot use #STARTTIME command with #RESTART!')
-  
+
        !!!!!! RESTART DATA !!!!!!!
        call read_restart
-  
+
        call psiges
        call alfges
-  
+
        call get_indices(TimeRamNow%Time, Kp, f107, AE)
        TOLV = FLOOR(TimeRamElapsed/DtEfi)*DtEfi
-  
+
        ! Compute information not stored in restart files
        if (HardRestart) then
           call computational_domain
@@ -650,7 +650,7 @@ MODULE ModRamInit
           call computeBandJacob
           call compute3DFlux
        endif
-  
+
        call get_boundary_flux ! FGEOS
     else
        nIter = 1
@@ -659,7 +659,7 @@ MODULE ModRamInit
        ! Initial indices
        call get_indices(TimeRamNow%Time, Kp, f107, AE)
        TOLV = 0.0
-  
+
        ! Initialize flux and pressure for default species
        ! Electron, Hydrogen, HeliumP1, OxygenP1 (sets to
        ! 0._dp for other species)
@@ -672,23 +672,26 @@ MODULE ModRamInit
           methodTemp = method
           NameBoundMag = 'DIPL'
           method = 3
-       endif 
+       endif
        call computational_domain
 
        ! Compute the SCB computational domain
        write(*,*) ''
        call write_prefix
-       write(*,'(a)') 'Running SCB model to initialize B-field...' 
+       write(*,'(a)') 'Running SCB model to initialize B-field...'
        call ram_sum_pressure
        call scb_run(0)
-  
+
        ! Couple SCB -> RAM
        call computehI(0)
 
        ! Initialize flux for species with injection files
+       write(*,*) "HELLO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+
        do i = 1, nS
           if ((trim(species(i)%Initialization).ne.'InitializationFile') &
               .and.(trim(species(i)%Initialization).ne.'na')) then
+             write(*,*) species(i)%Initialization
              call load_injection_file(i, trim(species(i)%Initialization), F2(i,:,:,:,:))
           endif
        enddo
@@ -696,7 +699,7 @@ MODULE ModRamInit
        ! Reset dipole initialization for SWMF runs
        if (NameBoundMagTemp == 'SWMF') then
         method = methodTemp
-        NameBoundMag = NameBoundMagTemp 
+        NameBoundMag = NameBoundMagTemp
        endif
 
        ! Plasmasphere Initialization
@@ -717,9 +720,9 @@ MODULE ModRamInit
        call writeLosses
     end if
   !!!!!!!!
-  
+
    return
-  
+
   end subroutine init_input
 
 END MODULE ModRamInit

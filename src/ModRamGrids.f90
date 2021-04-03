@@ -9,12 +9,12 @@ Module ModRamGrids
 
   implicit none
 
-  character(len=100) :: NameVar = '_H _O He _e'
+  character(len=100) :: NameVar = '_H He _O'
 
   !!! RAM Grids
   integer :: nS       = 4,   &  ! number of species to run
              NR       = 20,  &  ! grid points in radial direction
-             NT       = 25,  &  ! grid points in local time direction
+             NT       = 49,  &  ! grid points in local time direction
              NE       = 35,  &  ! number of energy bins
              NPA      = 72,  &  ! grid points in pitch angle dimension
              NEL      = 36,  &  ! Energy bins in boundary file (for SWMF or LANL)
