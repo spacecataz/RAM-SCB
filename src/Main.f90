@@ -148,7 +148,7 @@ subroutine CON_stop(String)
   character(len=200) :: FileName
 
   integer :: i, j, k
-
+  
   write(*,*)'Stopping execution! at time=',TimeRamElapsed,' with msg:'
   write(*,*)String
 
@@ -171,7 +171,7 @@ end subroutine CON_stop
 
 subroutine CON_set_do_test(String,DoTest,DoTestMe)
   ! Replaces the SWMF testing routine.
-  
+
   use ModRamParams, ONLY: StringTest
 
 
@@ -185,7 +185,7 @@ contains
   !================================================================================================
   integer function i_sub_string(StringA,StringB)
 
-    ! This is needed to avoid some SGI f90 compiler bug 
+    ! This is needed to avoid some SGI f90 compiler bug
     ! (which results in a memory leak) if we use
     !
     ! index(' '//StringTest,' '//str//' ')

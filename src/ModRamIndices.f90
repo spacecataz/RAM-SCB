@@ -13,8 +13,13 @@ module ModRamIndices
   contains
   !===========================================================================
   subroutine read_index_file(StartTime, EndTime, NameFile)
-    ! Read RAMIndices file
+    ! Read RAMIndices file (txt file in same directory as ram_scb.exe)
+    ! RAMIndices contains data of daily Kp, and F10.7 values staring from
+    ! Jan 01, 1958 and going to May 15, 2018. Kp data is reported 8 times for a
+    ! I suspect this is the every 3 hour meserment of Kp made on that day.
 
+    ! retrive variables which already exist/ are defined /initialized in other
+    ! files
     use ModRamMain, ONLY: Real8_
     use ModRamVariables, ONLY: nRawKp, nRawF107, nRawAE, kptime, &
                                timeKp, timeF107, timeAE, rawKp, rawF107, rawAE
@@ -25,23 +30,33 @@ module ModRamIndices
 
     implicit none
 
+    ! defines the start and stop time requested from the file. Therefore,
+    ! which Kp values from RAMIndices should be read in. Also the name of the
+    ! file which should be read
     type(timetype),   intent(in) :: StartTime, EndTime
     character(len=*), intent(in) :: NameFile
 
+    !
     integer :: dateIndex
     real(kind=Real8_) :: tmpF107
 
+    ! intergers representing the year month and day
     integer :: i, j, iError, iYY, iMM, iDD
     character(len=100) :: StringLine, StringFmt
     real(kind=Real8_) :: tmpKp(8)
 
+    !
     integer :: cyy, cmm, cdd, chh, cmin, ij, ierr, iLines
     character(len=100) :: header, fname
-    
+
+    !
     logical :: DoTest, DoTestMe
     character(len=*), parameter :: NameSub='read_index_file'
     !------------------------------------------------------------------------
     call CON_set_do_test(NameSub, DoTest, DoTestMe)
+    ! The test consists of letting the user see what file is being opened and
+    ! what the start and stop date times are which are being used to control
+    ! what read_index_file reads in.
     if(DoTest) then
        write(*,*)'Loading indices from ', trim(NameFile)
        write(*,'(a, i4, 2("-",i2.2),1x, i2.2,2(":",i2.2))') 'Start Time = ', &
@@ -51,18 +66,27 @@ module ModRamIndices
             EndTime%iYear, EndTime%iMonth, EndTime%iDay, &
             EndTime%iHour, EndTime%iMinute, EndTime%iSecond
     end if
-    
+
     !!! Open file and find the starting date of file
+    ! dateIndex is a variable tracking if the line currently being read is the
+    ! requested start line (i.e. that start time falls on the day of the line
+    ! being read). It starts at -1 and ticks up every time the start time is
+    ! found. 
     dateIndex = -1
     open(unit=UNITTMP_, FILE=NameFile, STATUS='OLD', IOSTAT=iError)
     if (iError.ne.0) call CON_stop(NameSub//' Error opening file '//NameFile)
     Read_RamIndices_Dates: Do
+        ! Once the file has been opened find the start date, and read in
+        ! initial values of Kp and F10.7.
         read(UNITTMP_, '(i4, i2, i2, 8(1x,f3.1), 1x, f5.1)', IOSTAT=iError) &
                          iYY, iMM, iDD, tmpKp, tmpF107
+        ! check to make sure the start time is actually inculded in the file
         if (iError.lt.0) then
            call CON_stop( &
                 NameSub//': Start date outside of range of RamIndices file')
         end if
+        ! if the variable StartTime isn't what the current line open in the file
+        ! iterate StartTime and check again
         if ((StartTime%iYear  .eq. iYY)  .and. &
             (StartTime%iMonth .eq. iMM)  .and. &
             (StartTime%iDay   .eq. iDD)) then
@@ -78,6 +102,8 @@ module ModRamIndices
     open(unit=UNITTMP_, FILE=NameFile, STATUS='OLD', IOSTAT=iError)
     if (dateIndex.eq.0) then
       read(UNITTMP_, *) StringLine
+      ! Again the test is to print out the start time that is being used to
+      ! pull data form the file
       if (DoTest) then
         write(*,'(a, i4, 2("-",i2.2),1x, i2.2,2(":",i2.2))') 'Start Time = ', &
                   StartTime%iYear, StartTime%iMonth, StartTime%iDay, &
@@ -88,6 +114,7 @@ module ModRamIndices
         write(*,*) NameSub//': Line before requested date:'
         write(*,*) StringLine
       end if
+
     elseif (dateIndex.gt.0) then
       ! Fast forward to current position.
       write(StringFmt, "('(',i10,'(/)a)')") dateIndex
@@ -136,7 +163,7 @@ module ModRamIndices
                timeKp(8*(i-1)+j))
        end do
     end do
-    
+
     close(UNITTMP_)
 
     If (DoUseEMIC) then
@@ -151,7 +178,7 @@ module ModRamIndices
        end do
        ilines = ij - 1
        rewind(UNITTMP_)
-       
+
        nRawAE = iLines
        allocate(timeAE(nRawAE), rawAE(nRawAE))
        do ij=1, iLines
@@ -159,7 +186,7 @@ module ModRamIndices
                cyy, cmm, cdd, chh, cmin, rawAE(ij)
           call time_int_to_real((/cyy,cmm,cdd,chh,cmin,0,0/), timeAE(ij))
        end do
-       
+
        close(UNITTMP_)
     end If
 
@@ -200,20 +227,20 @@ module ModRamIndices
                                timeF107, timeAE, rawKp, rawF107, rawAE, species
     use ModRamParams,    ONLY: DoUseEMIC
     use ModRamMain, ONLY: Real8_
-    
+
     implicit none
 
     real(kind=Real8_), intent(in) :: timeNow
     real(kind=Real8_), intent(out):: kpNow, f10Now
     integer,           intent(out):: AENow
-    
+
     integer :: iTime, i
     real(kind=Real8_) :: dTime, dateNow, BEXP, AHE0, AHE1, GEXP, Operc
 
     !------------------------------------------------------------------------
-    ! NOTE: AS MORE SOURCES ARE ADDED, USE CASE STATEMENTS TO 
+    ! NOTE: AS MORE SOURCES ARE ADDED, USE CASE STATEMENTS TO
     ! CREATE DIFFERENT METHODS FOR OBTAINING THE INDICES AT timeNow.
-    ! Find points in time about current time.  
+    ! Find points in time about current time.
     ! After this loop, iTime = position in timeKp after timeNow.
     iTime=1
     do while( (iTime < nRawKp) .and. (timeKp(iTime) < timeNow))
@@ -241,7 +268,7 @@ module ModRamIndices
        do while ( (iTime .lt. nRawAE) .and. (timeAE(iTime) .le. timeNow))
           iTime = iTime + 1
        end do
-       ! Interpolate AE index to current time 
+       ! Interpolate AE index to current time
        dTime = (timeNow - timeAE(iTime-1))/(timeAE(iTime)-timeAE(iTime-1))
        AENow = int(dTime*(rawAE(iTIme)-rawAE(iTime-1))+rawAE(iTime-1))
     else

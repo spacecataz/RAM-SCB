@@ -74,12 +74,12 @@ module ModRamTiming
     ! Initialize efficiency file.
     write(NameEffFile, '(a,a,i8.8,a)') &
          trim(PathRamOut), '/efficiency_n', nIter, '.txt'
-
+    write(*,*) "We reached ModRamTiming_init_timing!"
     ! Open file:
     open(unit=UNITTMP_, file=NameEffFile, status='REPLACE', &
          action='WRITE', iostat=iError)
     if(iError .ne. 0) call CON_stop(NameSub// 'cannot open file '//NameFile)
-
+    write(*,*) "We opened the file!"
     ! Write header:
     write(UNITTMP_, '(a,f10.1)')'Run started at t=',TimeRestart
     write(UNITTMP_, *)'SysTime  RunTime  Efficiency=Run/Sys'

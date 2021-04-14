@@ -38,7 +38,7 @@ MODULE ModRamSpecies
      ! Define the available species for use in RAM-SCB
 
      implicit none
-
+     !write(*,*) "HERE WE GO WE REACHED Electrons!"
      ! Electrons
      RAMSpecies(1)%s_name = "Electron"
      RAMSpecies(1)%s_code = "_e"
@@ -54,7 +54,7 @@ MODULE ModRamSpecies
      RAMSpecies(1)%CEX_species = 'na'
      RAMSpecies(1)%Initialization = 'InitializationFile'
      RAMSpecies(1)%plasmasphereRatio = 1.0
-
+     !write(*,*) "HERE WE GO WE REACHED Proton!"
      ! Protons
      RAMSpecies(2)%s_name = "Hydrogen"
      RAMSpecies(2)%s_code = "_H"
@@ -70,7 +70,7 @@ MODULE ModRamSpecies
      RAMSpecies(2)%CEX_species = 'na'
      RAMSpecies(2)%Initialization = 'InitializationFile'
      RAMSpecies(2)%plasmasphereRatio = 0.77
-
+     !write(*,*) "HERE WE GO WE REACHED Helium!"
      ! Helium +1
      RAMSpecies(3)%s_name = "HeliumP1"
      RAMSpecies(3)%s_code = "He"
@@ -86,7 +86,7 @@ MODULE ModRamSpecies
      RAMSpecies(3)%CEX_species = 'na'
      RAMSpecies(3)%Initialization = 'InitializationFile'
      RAMSpecies(3)%plasmasphereRatio = 0.2
-
+     !write(*,*) "HERE WE GO WE REACHED Oxygen!"
      ! Oxygen +1
      RAMSpecies(4)%s_name = "OxygenP1"
      RAMSpecies(4)%s_code = "_O"
@@ -102,7 +102,7 @@ MODULE ModRamSpecies
      RAMSpecies(4)%CEX_species = 'na'
      RAMSpecies(4)%Initialization = 'InitializationFile'
      RAMSpecies(4)%plasmasphereRatio = 0.03
-
+     !write(*,*) "HERE WE GO WE REACHED Nitrogen!"
      ! Nitrogen +1
      RAMSpecies(5)%s_name = "Nitrogen"
      RAMSpecies(5)%s_code = "_N"
@@ -118,7 +118,7 @@ MODULE ModRamSpecies
      RAMSpecies(5)%CEX_species = 'nH'
      RAMSpecies(5)%Initialization = 'na'
      RAMSpecies(5)%plasmasphereRatio = 0.0
-
+     !write(*,*) "HERE WE GO WE REACHED Strontium!"
      ! Strontium +1
      RAMSpecies(6)%s_name = "Strontium"
      RAMSpecies(6)%s_code = "Sr"

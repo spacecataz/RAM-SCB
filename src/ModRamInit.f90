@@ -686,9 +686,9 @@ MODULE ModRamInit
        call computehI(0)
 
        ! Initialize flux for species with injection files
-       write(*,*) "HELLO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-
+       write(*,*) "About to initialize injections! punk."
        do i = 1, nS
+          write(*,*) "i, Initfile = ", i, species(i)%Initialization
           if ((trim(species(i)%Initialization).ne.'InitializationFile') &
               .and.(trim(species(i)%Initialization).ne.'na')) then
              write(*,*) species(i)%Initialization

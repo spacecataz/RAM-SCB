@@ -1,11 +1,11 @@
 #!/usr/bin/perl -i
 #Config.pl - The configuration script for RAM-SCB.
-#This requires the main Config.pl script, located in: 
+#This requires the main Config.pl script, located in:
 #   share/Scripts/        (Standalone mode)
 #   ../../share/Scripts   (Framework Module mode)
 #
 #Note that, different from other module's Config.pls,
-#much work is dedicated to the installation of 
+#much work is dedicated to the installation of
 #standalone libraries used by RAM-SCB.
 
 use strict;
@@ -26,7 +26,7 @@ foreach(@Arguments){
     if(/^-scheme/) {$SchemeUser = 'True';
                     push(@Arguments,"-compiler=gfortran");
                     push(@Arguments,"-mpi=openmpi");
-                    push(@Arguments,"-openmp");  
+                    push(@Arguments,"-openmp");
                     #system("bash","-c","source schemeSetup.sh");
                     next;
     }
@@ -38,7 +38,7 @@ if(-f $config){
     require $config;
     $IsStandalone = 'False';
 }else{
-    require "share/Scripts/Config.pl";
+    require "./share/Scripts/Config.pl";
 }
 
 # Other variables inherited from share/Scripts/Config.pl
@@ -124,7 +124,7 @@ sub set_libs
     # This subroutine should ONLY be called on an install/reinstall.
 {
     print "Setting library locations for RAM_SCB\n";
-    
+
     # Echo libraries used if $Verbose flag set.
     if($Verbose){print "$_ is found at $libs{$_}\n" foreach(keys(%libs))};
 
@@ -222,8 +222,8 @@ sub set_libs
     }
 }
 
-sub check_exists { 
-    my $check = `sh -c 'command -v $_[0]'`; 
+sub check_exists {
+    my $check = `sh -c 'command -v $_[0]'`;
     return $check;
 }
 
@@ -235,7 +235,7 @@ sub print_help
 Additional options for RAM-SCB/Config.pl:
 
 -ncdf=(path)      Set installation path for NetCDF libraries.
--gsl=(path)   Set installation path for GSL libraries. 
+-gsl=(path)   Set installation path for GSL libraries.
 
 These MUST be set if environment variables GSLDIR and
 NETCDFDIR are not set.  If both flag and env variable are
@@ -243,7 +243,7 @@ set, Config.pl will use the flag value.  This allows for
 multiple installations of the libraries. If the flags are set
 no path is given (e.g., '-ncdf') then Config.pl will use the
 libraries own utility to look up required information.
-    
+
 Example installation for RAM-SCB standalone:
 
      Config.pl -install -ncdf=~/NetCDF/ -mpi=mpich2 -single -compiler=pgf90

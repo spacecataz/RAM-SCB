@@ -9,7 +9,7 @@ Module ModRamGrids
 
   implicit none
 
-  character(len=100) :: NameVar = '_H He _O'
+  character(len=100) :: NameVar = '_H _O He _e'
 
   !!! RAM Grids
   integer :: nS       = 4,   &  ! number of species to run

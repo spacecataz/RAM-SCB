@@ -63,6 +63,7 @@ outflux = np.interp(outJDs, jds, AU1flux)
 
 #now get Kp values...
 #start with first month
+# taken from the GFZ in Potsdam, Germany
 year, month = outdates[0].year, outdates[0].month
 io_store = io.StringIO()
 ftp = ftplib.FTP('ftp.gfz-potsdam.de')
@@ -103,4 +104,3 @@ for od, of in zip(outdates, outflux):
     printme = ''.join(['{0: 2.1f}'.format(k) for k in kpvals])
     with open('../input/RamIndices.txt', 'a') as fh:
         fh.write('{0}{1} {2:05.1f}\n'.format(od.strftime('%Y%m%d'), printme, of))
-

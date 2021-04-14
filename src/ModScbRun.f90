@@ -11,7 +11,7 @@
     integer, save :: iteration
 
     contains
-  
+
 !==============================================================================
   SUBROUTINE scb_run(nIter)
     !!!! Module Variables
@@ -42,7 +42,7 @@
     use nrtype, ONLY: DP, twopi_d
 
     implicit none
-  
+
     INTEGER, INTENT(IN) :: nIter
     INTEGER  :: iconv, nisave1, iCountEntropy
     INTEGER  :: SCBIterNeeded
@@ -125,7 +125,7 @@
     diffmx1 = 0._dp
     entropyFixed = 0._dp
     fluxVolume = 0._dp
-  
+
     iteration = 0
     iCountEntropy = 1
     iconv = 0
@@ -205,7 +205,7 @@
     alfaSav1 = alfa
     psiSav1 = psi
 
-    Outeriters: DO 
+    Outeriters: DO
        IF (method == 3) exit Outeriters
 
    !!!!! Start Equation 1 Section
@@ -213,8 +213,8 @@
        CALL pressure         ! Get pressure gradients
        CALL metrica          ! Calculates LHS of Equation 1
        CALL newk             ! Calculates RHS of Equation 1
- 
-       ! Solve LHS = RHS for Equation 1 
+
+       ! Solve LHS = RHS for Equation 1
        blendAlpha = MAX(blendAlpha,blendMin)
        blendAlpha = MIN(blendAlpha,blendMax)
        errorAlphaPrev = errorAlpha
@@ -231,9 +231,9 @@
        sumb1 = sumb
        sumdb1 = sumdb
        diffmx1 = diffmx
-       nisave1 = nisave  
+       nisave1 = nisave
        errorAlpha = diffmx
-  
+
        ! Now move x, y, z points to match Equation 1 changes
        xPrev = x
        yPrev = y
@@ -268,7 +268,7 @@
           END IF
           EXIT Move_points_in_alpha_theta
        END DO Move_points_in_alpha_theta
-  
+
        IF (iAMR == 1) THEN
           ! Move points for "adaptive mesh refinement"
           CALL InterpolatePsiR
@@ -287,7 +287,7 @@
 
        !IF (isotropy == 1) CALL entropy(entropyFixed, fluxVolume, iCountEntropy)
        !IF (isFBDetailNeeded == 1) CALL Write_Convergence_Anisotropic('02')
- 
+
 
    !!!!! Start of Equation 2 section
        call computeBandJacob ! Get spatial gradients and jacobian
@@ -311,8 +311,8 @@
            endif
        END SELECT
        errorPsi = diffmx
- 
-       ! Now move x, y, z points to match Equation 2 changes 
+
+       ! Now move x, y, z points to match Equation 2 changes
        xPrev = x
        yPrev = y
        zPrev = z
@@ -346,7 +346,7 @@
           END IF
           EXIT Move_points_in_psi_theta
        END DO Move_points_in_psi_theta
- 
+
        if (verbose) then
           if (iteration == 1) WRITE(*,*) 'itout ',' blendAlpha ',' blendPsi ',' itAlpha ', &
                                          ' diffAlpha ',' errorAlpha ', ' itPsi ',' diffPsi ', &
@@ -355,7 +355,7 @@
                 iteration, blendAlpha, blendPsi, nisave1, sumdb1, errorAlpha/twopi_d, &
                                                  nisave, sumdb, errorPsi/MAXVAL(ABS(psival))
        endif
-  
+
        ! Need to set an actual convergence criteria using the JxB and GradP
        ! values calculated in the Write_Convergence_Anisotropic subroutine.
        ! For now we will just use the residuals of the SOR calculations
@@ -391,10 +391,10 @@
              exit OuterIters
           ENDIF
        ENDIF
- 
+
        EXIT Outeriters
     END DO Outeriters
- 
+
     if (SORFail) then
        x = xStart
        y = yStart
@@ -412,7 +412,7 @@
                   yPrev, zPrev, alphaPrev, psiPrev, entropyFixed)
        return
     endif
- 
+
     if (method /= 3) then
        iConv = 1
        iConvGlobal = 1
@@ -423,7 +423,7 @@
        write(*,'(1x,a)',ADVANCE='NO') 'End of SCB Calculation: '
        write(*,'(I3,1x,a,1x,F6.2,1x,a)'), iteration, "outer iterations performed in", stoptime-starttime, "seconds."
     end if
-  
+
     CALL computeBandJacob
     CALL pressure
     CALL compute_convergence
@@ -437,7 +437,7 @@
     CALL bounextp
 
     IF (isFBDetailNeeded == 1 .and. method /= 3) CALL Write_Convergence_Anisotropic('01')
-    ! Computes energies and Dst from DPS relation, write to disk (+ Biot-Savart values) 
+    ! Computes energies and Dst from DPS relation, write to disk (+ Biot-Savart values)
     ! Remove for speed
     IF (isotropy == 0 .AND. isEnergDetailNeeded == 1) CALL dps_general
 
@@ -447,9 +447,9 @@
 
 
     RETURN
-  
+
   END SUBROUTINE scb_run
-  
+
 !==============================================================================
   SUBROUTINE energy
     !!!! Module Variables
@@ -460,21 +460,21 @@
     use nrtype, ONLY: DP
 
     implicit none
-  
+
     INTEGER  :: i, j, k
     REAL(DP) :: magneticEnergy, thermalEnergy, totalEnergy, volumeTotal
-  
+
     magneticEnergy = 0.0_dp
     thermalEnergy = 0.0_dp
     totalEnergy = 0.0_dp
     volumeTotal = 0.0_dp
-  
+
     IF (isotropy == 1) THEN
        DO i = 2, nthe-1
           DO j = 2, npsi-1
              DO k = 2, nzeta
                 IF ((ABS(x(i,j,k)) > 4._dp)) THEN
-                   ! Only for |X| > 5 R_E, closer distances not considered 
+                   ! Only for |X| > 5 R_E, closer distances not considered
                    magneticEnergy = magneticEnergy + jacobian(i,j,k) * dr * dpPrime * dt * &
                         & 0.5_dp * bsq(i,j,k)
                    thermalEnergy = thermalEnergy + jacobian(i,j,k) * dr * dpPrime * dt * &
@@ -485,21 +485,21 @@
           END DO
        END DO
     END IF
-  
+
     totalEnergy = magneticEnergy + thermalEnergy
-  
+
     WRITE(*, '(A, 1X, E12.3)') 'Magnetic energy = ', magneticEnergy
     WRITE(*, '(A, 1X, E12.3)') 'Thermal energy = ', thermalEnergy
     WRITE(*, '(A, 1X, E12.3)') 'Total energy = ', totalEnergy
     WRITE(*, '(A, 1X, E12.3)') 'Total volume = ', volumeTotal
-  
+
     RETURN
-  
+
   END SUBROUTINE energy
-  
+
 !==============================================================================
   SUBROUTINE entropy(ent_local, vol_local, iteration_local)
-    !!!! Module Variables 
+    !!!! Module Variables
     USE ModScbGrids,     ONLY: npsi, nzeta, dt
     use ModScbVariables, ONLY: x, y, z, xx, jacobian, bf, nThetaEquator, &
                                f, fzet, rhoVal, zetaVal, &
@@ -514,10 +514,10 @@
     use nrtype, ONLY: DP
 
     implicit none
-  
+
     real(DP), INTENT(INOUT) :: ent_local(:,:), vol_local(:,:)
     integer, intent(IN) :: iteration_local
-  
+
     INTEGER :: i, j, k, GSLerr
     REAL(DP), ALLOCATABLE :: dVoldXEq(:,:), dVoldYEq(:,:), dVoldZeta(:,:), dVoldAlpha(:,:), &
                              dVoldRho(:,:), dVoldPsi(:,:), dEntdXEq(:,:), dEntdYEq(:,:), &
@@ -525,7 +525,7 @@
                              dEntdPsi(:,:), facVasGlobal(:,:), secondTermB(:,:)
     REAL(DP) :: rr1, rr2, thangle, thangleOnEarth
     REAL(DP) :: dipoleFactor, dipoleFactor4RE, factorIncrease
-  
+
     ALLOCATE(dVoldZeta(npsi,nzeta), dVoldAlpha(npsi,nzeta), &
              dVoldRho(npsi,nzeta), dVoldPsi(npsi,nzeta), &
              dEntdRho(npsi,nzeta), dEntdPsi(npsi,nzeta), &
@@ -535,7 +535,7 @@
 
     vol_local = 0.0_dp
     if (iteration_local == 1) ent_local = 0.0_dp
-  
+
     DO j = 1, npsi
        DO k = 1, nzeta
           DO i = 1, nThetaEquator-1  ! only (nThetaEquator-1) integration intervals
@@ -544,24 +544,24 @@
           if (iteration_local == 1) ent_local(j,k) = pressure3D(nThetaEquator,j,k) * (vol_local(j,k))**(5./3.)
        END DO
     END DO
-  
+
     ! Compute grad(fluxVolume) components
-  
+
     CALL GSL_Derivs(rhoVal, zetaVal(1:nzeta), vol_local(:,1:nzeta), &
                        dVoldRho(:,1:nzeta), dVoldZeta(:,1:nzeta), GSLerr)
     CALL GSL_Derivs(rhoVal, zetaVal(1:nzeta), ent_local(:,1:nzeta), &
                        dEntdRho(:,1:nzeta), dEntdZeta(:,1:nzeta), GSLerr)
-  
+
     DO j = 1, npsi
        dVoldPsi(j,:) = 1._dp / f(j) * dVoldRho(j,:)
        dEntdPsi(j,:) = 1._dp / f(j) * dEntdRho(j,:)
     END DO
-  
+
     DO k = 1, nzeta
        dVoldAlpha(:,k) = dVoldZeta(:,k) / fzet(k)
        dEntdAlpha(:,k) = dEntdZeta(:,k) / fzet(k)
     END DO
-  
+
     ALLOCATE(dVoldXEq(npsi,nzeta), dVoldYEq(npsi,nzeta), &
              dEntdXEq(npsi,nzeta), dEntdYEq(npsi,nzeta))
     dVoldXEq = 0.0; dVoldYEq = 0.0; dEntdXEq = 0.0; dEntdYEq = 0.0
@@ -578,7 +578,7 @@
                dEntdPsi(j,k) * f(j) * gradRhoY(nThetaEquator,j,k)
        END DO
     END DO
-  
+
     ALLOCATE(facVasGlobal(npsi,nzeta), secondTermB(npsi,nzeta))
     facVasGlobal = 0.0; secondTermB = 0.0
 
@@ -593,7 +593,7 @@
                f(j)**2 * fzet(k) * gradRhoSq(1,j,k) * gradThetaGradZeta(1,j,k) * dPdPsi(1,j,k))
        END DO
     END DO
-  
+
     DO k = 1, nzeta
        DO j = 1, npsi
           xx(1,j,k) = SQRT(x(1,j,k)**2 + y(1,j,k)**2)
@@ -604,34 +604,34 @@
           thangle = ASIN(z(1,j,k) / rr1)
           ! thangleOnEarth is the polar angle on Earth's surface
           thangleOnEarth = ACOS(SQRT((COS(thangle))**2/r0Start))
-  
+
           ! Dipole field at the Earth's surface
           dipoleFactor = SQRT(1. + 3. * (SIN(thangleOnEarth))**2)
           dipoleFactor4RE = SQRT(1. + 3. * (SIN(thangle))**2)
           factorIncrease = dipoleFactor * r0Start**3 / dipoleFactor4RE
-  
+
           IF (INT(r0Start) /= 1) facVasGlobal(j,k) = facVasGlobal(j,k) * factorIncrease
        END DO
     END DO
 
     DEALLOCATE(facVasGlobal)
     DEALLOCATE(secondTermB)
-  
+
     DEALLOCATE(dVoldXEq)
     DEALLOCATE(dVoldYEq)
     DEALLOCATE(dEntdXEq)
     DEALLOCATE(dEntdYEq)
-  
+
     ! Can de-allocate derivXRho etc.
     DEALLOCATE(dVoldZeta, dVoldAlpha, &
                dVoldRho, dVoldPsi, &
                dEntdRho, dEntdPsi, &
                dEntdZeta, dEntdAlpha)
- 
+
   RETURN
-  
+
   END SUBROUTINE entropy
-  
+
 !==============================================================================
   SUBROUTINE bounextp
     !!!! Module Variables
@@ -643,17 +643,17 @@
     use nrtype, ONLY: DP
 
     implicit none
-  
+
     integer :: i,j,k
-  
+
     DO k = 1,nzetap
        DO j = 2,npsim
           CALL extap(bj(4,j,k),bj(3,j,k),bj(2,j,k),bj(1,j,k))
           CALL extap(bj(nthe-3,j,k),bj(nthe-2,j,k),bj(nthe-1,j,k),bj(nthe,j,k))
-  
+
           CALL extap(phij(4,j,k),phij(3,j,k),phij(2,j,k),phij(1,j,k))
           CALL extap(phij(nthe-3,j,k),phij(nthe-2,j,k),phij(nthe-1,j,k),phij(nthe,j,k))
-  
+
           CALL extap(bf(4,j,k),bf(3,j,k),bf(2,j,k),bf(1,j,k))
           CALL extap(bf(nthe-3,j,k),bf(nthe-2,j,k),bf(nthe-1,j,k) ,bf(nthe,j,k))
           bsq(1,j,k)=bf(1,j,k)**2
@@ -662,10 +662,10 @@
        DO i=1,nthe
           CALL extap(bj(i,4,k),bj(i,3,k),bj(i,2,k),bj(i,1,k))
           CALL extap(bj(i,npsi-3,k),bj(i,npsi-2,k),bj(i,npsi-1,k),bj(i,npsi,k))
-          
+
           CALL extap(phij(i,4,k),phij(i,3,k),phij(i,2,k),phij(i,1,k))
           CALL extap(phij(i,npsi-3,k),phij(i,npsi-2,k),phij(i,npsi-1,k),phij(i,npsi,k))
-  
+
           CALL extap(bf(i,4,k),bf(i,3,k),bf(i,2,k),bf(i,1,k))
           CALL extap(bf(i,npsi-3,k),bf(i,npsi-2,k),bf(i,npsi-1,k) ,bf(i,npsi,k))
           IF (bf(i,npsi,k) < 0._dp) bf(i,npsi,k) = bf(i,npsi-1,k)
@@ -673,11 +673,11 @@
           bsq(i,npsi,k) = bf(i,npsi,k)**2
        END DO
     END DO
-  
+
     RETURN
-  
+
   END SUBROUTINE bounextp
-  
+
 !==============================================================================
   SUBROUTINE dps_general
     ! Calculates the depression on the Earth's surface - generalized
@@ -693,7 +693,7 @@
     use nrtype, ONLY: DP, pi_d
 
     implicit none
-  
+
     INTEGER :: i, j, k
     REAL(DP) :: magneticEnergyDipole, rsq, totalEnergy, volumeTotal
     REAL(DP), ALLOCATABLE :: magneticEnergy(:), magneticEnergyInsideGeo(:), &
@@ -708,7 +708,7 @@
     thermalEnergyInsideGeo = 0.0_dp
     totalEnergy = 0.0_dp
     volumeTotal = 0.0_dp
-  
+
     DO i = 2, nthe-1
        DO j = 2, npsi
           DO k = 2, nzeta
@@ -732,9 +732,9 @@
           END DO
        END DO
     END DO
-  
+
     magneticEnergyDipole = 4._dp*pi_d/(3._dp*mu0) * BEarth**2 * REarth**3 ! In J
-  
+
     totalEnergy = SUM(magneticEnergy) + SUM(thermalEnergy)
     DstDPS = 1.3_dp * (-BEarth) * (2._dp*SUM(thermalEnergy))/(3._dp*magneticEnergyDipole) * 1.E9_dp
     DstDPSInsideGeo = 1.3_dp * (-BEarth) &
@@ -742,13 +742,13 @@
                              / (3._dp*magneticEnergyDipole) * 1.E9_dp
     WRITE(*, '(1X, A, 1X, F8.2, 1X, F8.2, 1X, F8.2, 1X, F8.2, A)') &
          'DstDPS, DstDPSGeo, DstBiot, DstBiotGeo = ', real(DstDPS), &
-         real(DstDPSInsideGeo), real(DstBiot), real(DstBiotInsideGeo), ' nT' ! 1.3 factor due to currents induced in the Earth 
+         real(DstDPSInsideGeo), real(DstBiot), real(DstBiotInsideGeo), ' nT' ! 1.3 factor due to currents induced in the Earth
 
-    DEALLOCATE(magneticEnergy,magneticEnergyInsideGeo,thermalEnergy,thermalEnergyInsideGeo)  
+    DEALLOCATE(magneticEnergy,magneticEnergyInsideGeo,thermalEnergy,thermalEnergyInsideGeo)
     RETURN
-  
+
   END SUBROUTINE dps_general
-  
+
 !==============================================================================
 SUBROUTINE pressure
     !!!! Module Variables
@@ -857,7 +857,7 @@ SUBROUTINE pressure
           angleGrid(j,k) = angle
        END DO
     END DO
- 
+
     !if (iteration.eq.0) then
        DO j1 = 1, nXRaw
           DO k1 = 1, nYRaw
@@ -1030,7 +1030,7 @@ SUBROUTINE pressure
        dPresdRho(:,1) = dPresdRho(:,nzeta)
        dPresdZeta(:,nzetap) = dPresdZeta(:,2)
        dPresdZeta(:,1) = dPresdZeta(:,nzeta)
-  
+
        CALL GSL_Derivs(rhoVal, zetaVal(1:nzeta), dPresdRho(:,1:nzeta), &
                        dSqPresdRhoSq(:,1:nzeta), dSqPresdRhodZeta(:,1:nzeta), GSLerr)
        CALL GSL_Derivs(rhoVal, zetaVal(1:nzeta), dPresdZeta(:,1:nzeta), &
@@ -1039,7 +1039,7 @@ SUBROUTINE pressure
        dSqPresdRhoSq(:,1) = dSqPresdRhoSq(:,nzeta)
        dSqPresdZetaSq(:,nzetap) = dSqPresdZetaSq(:,2)
        dSqPresdZetaSq(:,1) = dSqPresdZetaSq(:,nzeta)
-  
+
        DO i = 1, nthe
           DO j = 1, npsi
              dpdPsi(i,j,1:nzetap) = 1._dp / f(j) * dPresdRho(j,1:nzetap)
@@ -1065,8 +1065,8 @@ SUBROUTINE pressure
           CALL GSL_Interpolation_2D(radRawExt**2, azimRawExt, pressParRawExt, &
                                     radGrid(1:npsi,2:nzeta)**2, angleGrid(1:npsi,2:nzeta), &
                                     pparEq(1:npsi,2:nzeta), GSLerr)
-  
-          ! Sometimes the interpolation can give very small negative values very 
+
+          ! Sometimes the interpolation can give very small negative values very
           ! near the Earth; inconsequential
           DO k = 1, nzeta
              DO j = 10, 1, -1
@@ -1089,15 +1089,15 @@ SUBROUTINE pressure
 
           DO k = 1, nzeta
              DO j = 1, npsi
-                pEq = (2.*pperEq(j,k) + pparEq(j,k)) / 3._dp 
-                aratio(j,k) = pperEq(j,k) / pparEq(j,k) - 1._dp  
+                pEq = (2.*pperEq(j,k) + pparEq(j,k)) / 3._dp
+                aratio(j,k) = pperEq(j,k) / pparEq(j,k) - 1._dp
                 aLiemohn(j,k) = - aratio(j,k) / (aratio(j,k)+1_dp)
                 DO i = 1, nthe
                    ratioB = bf(nThetaEquator,j,k) / bf(i,j,k)
                    ratioB = min(ratioB, 1.0)
                    IF (iLossCone == 2) THEN
                       ! New reference values (Liemohn)
-                      rBI = MAX(bf(1,j,k)/bf(i,j,k), 1._dp+1.E-9_dp)  ! Must be larger than 1, i.e. the field at "Earth" higher than last field value 
+                      rBI = MAX(bf(1,j,k)/bf(i,j,k), 1._dp+1.E-9_dp)  ! Must be larger than 1, i.e. the field at "Earth" higher than last field value
                       pparN = pparEq(j,k) * (1._dp - (ratioB+aLiemohn(j,k)*ratioB)/(rBI+aLiemohn(j,k)*ratioB))
                       pperN = pperEq(j,k) * (1._dp - (ratioB+aLiemohn(j,k)*ratioB)/(rBI+aLiemohn(j,k)*ratioB))
                       aN = pparN/pperN - 1._dp
@@ -1115,14 +1115,14 @@ SUBROUTINE pressure
                 press(j,k) = pEq
              END DO
           END DO
-       ELSE     
+       ELSE
           call con_STOP('PROBLEM in pressure.f90')
        END IF
 
        pressure3D = 1.0/3.0*ppar + 2.0/3.0*pper
 
        ! Block for reducing anisotropy
-       IF (iReduceAnisotropy == 1) THEN 
+       IF (iReduceAnisotropy == 1) THEN
           DO k = 1, nzeta
              DO j = 1, npsi
                 Mirror_unstable:  IF (tau(nThetaEquator,j,k) < 0._dp) THEN
@@ -1136,7 +1136,7 @@ SUBROUTINE pressure
                    DO i = 1, nthe
                       ratioB = bf(nThetaEquator,j,k) / bf(i,j,k)
                       IF (iLossCone == 2) THEN
-                         rBI = MAX(bf(1,j,k)/bf(i,j,k), 1._dp+1.E-9_dp)  
+                         rBI = MAX(bf(1,j,k)/bf(i,j,k), 1._dp+1.E-9_dp)
                          pparN = pparEq(j,k) * (1._dp - (ratioB+aLiemohn(j,k)*ratioB)/(rBI+aLiemohn(j,k)*ratioB))
                          pperN = pperEq(j,k) * (1._dp - (ratioB+aLiemohn(j,k)*ratioB)/(rBI+aLiemohn(j,k)*ratioB))
                          aN = pparN/pperN - 1._dp
@@ -1168,19 +1168,19 @@ SUBROUTINE pressure
           dPperdPsi(:,j,:) = 1./f(j) * dPperdRho(:,j,:)
           dBsqdPsi(:,j,:) = 1./f(j) * dBsqdRho(:,j,:)
        END DO
-  
+
        DO k = 1, nzeta
           dPperdAlpha(:,:,k) = 1. / fzet(k) * dPperdZeta(:,:,k)
           dBsqdAlpha(:,:,k) = 1. / fzet(k) * dBsqdZeta(:,:,k)
        END DO
     END IF Isotropy_choice
- 
+
     DO j = 1, npsi
        DO i = 1, nthe
           colatitudeMid = ATAN2(xx(i,j,nZetaMidnight), z(i,j,nZetaMidnight))
           colatitudeNoo = ATAN2(xx(i,j,2), z(i,j,2))
           dipoleFactorMid(i,j) = SQRT(1. + 3. * (COS(colatitudeMid))**2) / (SIN(colatitudeMid))**6
-          dipoleFactorNoo(i,j) = SQRT(1. + 3. * (COS(colatitudeNoo))**2) / (SIN(colatitudeMid))**6 
+          dipoleFactorNoo(i,j) = SQRT(1. + 3. * (COS(colatitudeNoo))**2) / (SIN(colatitudeMid))**6
        END DO
     END DO
 
@@ -1195,9 +1195,9 @@ SUBROUTINE pressure
                outputPar, azimraw_local)
 
     RETURN
-  
+
   END SUBROUTINE pressure
- 
+
 FUNCTION pressureTsygMuk(xEqGsm, yEqGsm)
 
   ! Tsyganenko-Mukai statistical pressure model
@@ -1206,15 +1206,15 @@ FUNCTION pressureTsygMuk(xEqGsm, yEqGsm)
   ! JOURNAL OF GEOPHYSICAL RESEARCH, VOL. 108, NO. A3, 1136,
   ! doi:10.1029/2002JA009707, 2003
 
-  ! Table 1 
+  ! Table 1
   !Average hT i = 3.795 keV hNi = 0.625 cm 3 hPi = 0.229 nPa
-  !Model rms 
+  !Model rms
   ! deviation
   ! 1.422 0.342 0.0427
   ! Correlation 0.708 0.567 0.955
   ! Equation number (4)        (5)         (6)
 
-  ! PSW=1.94E-6*xn_pd*vel**2 
+  ! PSW=1.94E-6*xn_pd*vel**2
 
   USE nrtype
   USE ModScbVariables, ONLY: pnormal
@@ -1275,7 +1275,7 @@ FUNCTION pressureRad(radius)
   REAL(DP) :: m, n, pUp, pDown, x1, x2, delta1, delta2, pressureSK, pUp2, pDown2
 
   ! This subroutine outputs pressure as a function of radial distance r in the
-  ! equatorial plane, midnight 
+  ! equatorial plane, midnight
 
   ! Spence - Kivelson empirical formula
   IF (iCorrectedPressure /= 1) THEN
@@ -1312,5 +1312,5 @@ FUNCTION pressureRad(radius)
 
 END FUNCTION pressureRad
 
- 
+
 END MODULE ModScbRun
