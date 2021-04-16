@@ -5,13 +5,13 @@ module ModRamFunctions
 !=============================================================================
 
   implicit none
-  
+
   contains
 !==============================================================================
   function RamFileName(PrefixIn, SuffixIn, TimeIn)
     ! Create a file name using the new RAM-SCB I/O filename standards:
     ! FileNameOut = PrefixIn_dYYYYMMDD_tHHMMSS.SuffixIn
-    ! PrefixIn and SuffixIn are short, descriptive strings (e.g. 
+    ! PrefixIn and SuffixIn are short, descriptive strings (e.g.
     ! 'pressure', 'ram_o' for prefixes and 'dat', 'cdf' for suffixes.
 
     use ModTimeConvert
@@ -92,7 +92,7 @@ module ModRamFunctions
 
 !=============================================================================
   function gammp(A,X,IER)
-    
+
     use ModRamMain, ONLY: Real8_
 
     implicit none
@@ -105,13 +105,13 @@ module ModRamFunctions
     IER = 0
     IF(X.LT.0..OR.A.LE.0.) & !PAUSE -- pause is antiquated.
          write(*,*)'WARNING! X and/or A arguments to GAMMP < 0!!!'
-    
+
   ! use series representation
     IF(X.LT.A+1.)THEN
        CALL GSER(GAMMP,A,X,GLN,IER)
        IER = IER * 20
        IF (IER.EQ.20) return
-       
+
   ! continued fraction representation
     ELSE
        CALL GCF(GAMMCF,A,X,GLN,IER)
@@ -160,7 +160,7 @@ module ModRamFunctions
       RETURN
 1     GAMSER=SUM*EXP(-X+A*LOG(X)-GLN)
       RETURN
-      
+
   end subroutine GSER
 
 !=============================================================================
@@ -218,7 +218,7 @@ module ModRamFunctions
       RETURN
 1     GAMMCF=EXP(-X+A*LOG(X)-GLN)*G
       RETURN
-      
+
   end subroutine GCF
 
 !=============================================================================
@@ -253,9 +253,9 @@ module ModRamFunctions
 
 !=============================================================================
   function Gcoul(x)
-    
+
     use ModRamMain, ONLY: Real8_
-    use ModRamConst, ONLY: PI 
+    use ModRamConst, ONLY: PI
 
     implicit none
 
@@ -276,7 +276,7 @@ module ModRamFunctions
     use ModRamConst, ONLY: PI
 
     implicit none
-    
+
     real(kind=Real8_), intent(in)  :: x
     real(kind=Real8_) :: y, alpha, beta, a1, a2, a3, a4
     real(kind=Real8_) :: funt
@@ -320,13 +320,13 @@ module ModRamFunctions
     FUNI=2.*ALPHA*(1.-Y)+2.*BETA*Y*ylog+4.*BETA*(Y-SQRT(Y))+ &
          3.*A1*(Y**(1./3.)-Y)+6.*A2*(Y**(2./3.)-Y)+6.*A4*(Y-Y**(4./3.)) &
          -2.*A3*Y*ylog
-    
+
     return
   end function funi
 
 !=============================================================================
    function atan2d(y, x)
-    
+
     use ModRamMain, ONLY: Real8_
     use ModRamConst, ONLY: PI
 
@@ -339,28 +339,32 @@ module ModRamFunctions
     atan2d=180.0/pi*atan2(y,x)
     return
   end function atan2d
- 
+
 !=============================================================================
   function acosd(x)
 
     use ModRamMain, ONLY: Real8_
     use ModRamConst, ONLY: PI
-    
+
 
     implicit none
     real(kind=Real8_), intent(in) :: x
     real(kind=Real8_) :: acosd
+
+    write(*,*) "The value being  is ", x
     !-----------------------------------------------------------------------
     acosd=180.0/pi*acos(x)
+    write(*,*) "The value of acosd is", acosd
     return
+    write(*,*) "We have returned from acosd"
   end function acosd
-  
+
 !=============================================================================
   function asind(x)
 
     use ModRamMain, ONLY: Real8_
     use ModRamConst, ONLY: PI
-    
+
 
     implicit none
     real(kind=Real8_), intent(in) :: x
@@ -384,7 +388,7 @@ module ModRamFunctions
     cosd=cos(pi/180.0 * x)
     return
   end function cosd
-    
+
 !=============================================================================
   function sind(x)
 
@@ -399,7 +403,7 @@ module ModRamFunctions
     sind=sin(pi/180.0 * x)
     return
   end function sind
-    
+
 !=============================================================================
   subroutine get_dipole_trace(xIn, nPoints, xOut, yOut, zOut, bxOut, byOut, bzOut)
     ! Create nPoints cartesian points along dipole from xIn to Earth's surface.
@@ -407,7 +411,7 @@ module ModRamFunctions
     use ModRamConst, ONLY: b0dip
 
     implicit none
-    
+
     ! Argument declarations
     real(kind=Real8_), intent(in) :: xIn(3)
     integer,           intent(in) :: nPoints
@@ -423,17 +427,17 @@ module ModRamFunctions
     r   = sqrt(  xIn(1)**2+xIn(2)**2+xIn(3)**2 )
     lat = asin(  xIn(3)/r )
     lon = atan2( xIn(2), xIn(1) )
-    
+
     ! Create spacing between points.
     dS = 1.0/real(nPoints)
     do i=1, nPoints
        distance(i) = real(i)*dS
     end do
-    
+
     ! Create arrays of new locations.
     rads = r - (r-1.)*distance
     lats = acos( sqrt(rads/r*cos(lat)**2.0 ))
-    
+
     ! Convert to new cartesian points.
     rXyStart = r*cos(lat)
     rXy      = rads*cos(lats)
@@ -458,11 +462,11 @@ module ModRamFunctions
     use nrtype, ONLY: DP
 
     implicit none
-    
+
     real(DP), parameter :: onethird=1.0/3.0, twothird=2.0/3.0
     integer :: i, j, iS
     !------------------------------------------------------------------------
-   
+
     do i=1, nR
        do j=1, nT
           PAllSum(i,j) = 0.0
@@ -474,7 +478,7 @@ module ModRamFunctions
           enddo
        end do
     end do
-    
+
 
   end subroutine ram_sum_pressure
 
@@ -516,7 +520,7 @@ module ModRamFunctions
          (z(I4(4))-z(I4(2)))**2);
     D32=SQRT((x(I4(4))-x(I4(3)))**2+(y(I4(4))-y(I4(3)))**2+&
          (z(I4(4))-z(I4(3)))**2);
-    
+
     A1=(f1-f0) / D10;
     A2=((f2-f0) / D20 + (f0-f1)/D10)/D12;
     A3=(D12*((f3-f0)/D30+(f0-f1)/D10) + &
@@ -524,10 +528,10 @@ module ModRamFunctions
     dv0=SQRT((xi-x(I4(1)))**2+(yi-y(I4(1)))**2+(zi-z(I4(1)))**2)
     dv1=SQRT((xi-x(I4(2)))**2+(yi-y(I4(2)))**2+(zi-z(I4(2)))**2)
     dv2=SQRT((xi-x(I4(3)))**2+(yi-y(I4(3)))**2+(zi-z(I4(3)))**2)
-    dv3=SQRT((xi-x(I4(4)))**2+(yi-y(I4(4)))**2+(zi-z(I4(4)))**2)   
-    
+    dv3=SQRT((xi-x(I4(4)))**2+(yi-y(I4(4)))**2+(zi-z(I4(4)))**2)
+
     NewtfitLarge = f0+A1*dv0+A2*dv0*dv1+A3*dv0*dv1*dv2
-    
+
   end function NewtFitLarge
 
 !=============================================================================
@@ -539,7 +543,7 @@ module ModRamFunctions
     ! U is an 4-element vector of the values to be interpolated.
     ! xi, yi, and zi are the coordinates at which to interpolate.
     ! The return value, NewtFit, is the value of U interpolated to xi,yi,zi.
-    
+
     ! This function is sensitive to the order of the variables in each
     ! vector.  For example, x(1) should correspond to the x coordinate
     ! of the first nearest neighbor, while x(4) should correspond to the
@@ -575,33 +579,33 @@ module ModRamFunctions
     dv0=SQRT( (xi-x(1))**2 + (yi-y(1))**2 + (zi-z(1))**2 )
     dv1=SQRT( (xi-x(2))**2 + (yi-y(2))**2 + (zi-z(2))**2 )
     dv2=SQRT( (xi-x(3))**2 + (yi-y(3))**2 + (zi-z(3))**2 )
-    dv3=SQRT( (xi-x(4))**2 + (yi-y(4))**2 + (zi-z(4))**2 )   
-    
+    dv3=SQRT( (xi-x(4))**2 + (yi-y(4))**2 + (zi-z(4))**2 )
+
     NewtFit = u(1) + A1*dv0 + A2*dv0*dv1 + A3*dv0*dv1*dv2
 
     ! If the result is not within the bounds of surrounding points,
-    ! just use nearest neighbor.  
+    ! just use nearest neighbor.
     if( (NewtFit > maxval(u)) .or. (NewtFit < minval(u)) ) &
          NewtFit = u(1)
- 
+
   end function NewtFit
   !=============================================================================
   function WeightFit(n, x,y,z, u, xnew)
-    ! Weighted linear interpolation (weights are distance inverses) for n 
-    ! nearest neighbor points.  
-    ! Inputs: 
+    ! Weighted linear interpolation (weights are distance inverses) for n
+    ! nearest neighbor points.
+    ! Inputs:
     ! x, y, z are the locations of the n nearest neighbors.  Must be in order
-    !         from nearest to farthest.  
+    !         from nearest to farthest.
     ! xi, yi, and zi are the coordinates of the point to which to interpolate.
     ! u are the values to be interpolated from points x,y,z to xi, yi, zi.
     ! Again, it is key that each array is placed in nearest-to-farthest order.
     ! Return value is u(n) interpolated to point xi, yi, zi.
-    
+
     use ModRamMain, ONLY: Real8_
-    
+
 
     implicit none
-    
+
     ! Arguments and return value:
     integer, intent(in) :: n
     real(kind=Real8_), intent(in) :: x(n), y(n), z(n), u(n), xnew(3)
@@ -619,9 +623,9 @@ module ModRamFunctions
     do i = 1, n
        ! print*, 'WeightFit: value at grid point ', i, ' :', u(i)
        ! dv0(1) should be smallest
-       dv(i) = (xi-x(i))**2 + (yi-y(i))**2 + (zi-z(i))**2 
+       dv(i) = (xi-x(i))**2 + (yi-y(i))**2 + (zi-z(i))**2
     end do
-    
+
     if (minval(dv) > 1.E-6) then ! Reference point far enough from neighbors
        do i=1, n
           SumWeights = SumWeights +  1.0 / dv(i)
@@ -631,9 +635,9 @@ module ModRamFunctions
     else
        WeightFit = u(1) ! Nearest neighbor
     end if
-    
+
     ! If the result is not within the bounds of surrounding points,
-    ! just use nearest neighbor.  
+    ! just use nearest neighbor.
     if( (WeightFit > maxval(u)) .or. (WeightFit < minval(u)) ) &
          WeightFit = u(1)
 
@@ -646,6 +650,6 @@ module ModRamFunctions
     !write(*,*) 'Result = ', WeightFit
 
   END FUNCTION WeightFit
-  
+
 !=============================================================================
 end module ModRamFunctions

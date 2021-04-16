@@ -10,7 +10,7 @@ module ModRamParams
   implicit none
 
  !!!! PARAM Variables
-  logical :: DoUseRAM = .false.
+  logical :: DoUseRAM = .true.
   logical :: TimedRestarts = .true.
   logical :: Optim = .false.
   logical :: verbose = .false.

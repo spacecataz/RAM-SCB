@@ -68,17 +68,22 @@ module ModRamTiming
     !-------------------------------------------------------------------------
     !Set system time for beginning of simulation.
     !call cpu_time(SysTimeStart)
+    write(*,*) "Initial vlaue of iError:"
+    write(*,*) iError
     call system_clock(t1,clock_rate,clock_max)
     SysTimeStart = t1/clock_rate
 
     ! Initialize efficiency file.
     write(NameEffFile, '(a,a,i8.8,a)') &
-         trim(PathRamOut), '/efficiency_n', nIter, '.txt'
-    write(*,*) "We reached ModRamTiming_init_timing!"
+         trim(PathRamOut), 'efficiency_n', nIter, '.txt'
+    write(*,*) "We reached ModRamTiming_init_timing! We are trying to open file:"
+    write(*,*) NameEffFile
     ! Open file:
     open(unit=UNITTMP_, file=NameEffFile, status='REPLACE', &
          action='WRITE', iostat=iError)
-    if(iError .ne. 0) call CON_stop(NameSub// 'cannot open file '//NameFile)
+    write(*,*) "The value of iError after open is:"
+    write(*,*) iError
+    if(iError .ne. 0) call CON_stop(NameSub// 'cannot open file '//NameEffFile)
     write(*,*) "We opened the file!"
     ! Write header:
     write(UNITTMP_, '(a,f10.1)')'Run started at t=',TimeRestart
