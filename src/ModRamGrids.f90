@@ -13,7 +13,7 @@ Module ModRamGrids
 
   !!! RAM Grids
   integer :: nS       = 4,   &  ! number of species to run
-             NR       = 40,  &  ! grid points in radial direction
+             NR       = 20,  &  ! grid points in radial direction
              NT       = 25,  &  ! grid points in local time direction
              NE       = 35,  &  ! number of energy bins
              NPA      = 72,  &  ! grid points in pitch angle dimension

@@ -350,8 +350,8 @@ module ModRamFunctions
     implicit none
     real(kind=Real8_), intent(in) :: x
     real(kind=Real8_) :: acosd
-    !write(*,*) "The function acosd has been called:"
-    !write(*,*) "x =  ", x
+    write(*,*) "The function acosd has been called:"
+    write(*,*) "x =  ", x
     !-----------------------------------------------------------------------
     acosd=180.0/pi*acos(x)
     return
