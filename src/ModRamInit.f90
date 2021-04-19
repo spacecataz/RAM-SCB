@@ -383,13 +383,17 @@ MODULE ModRamInit
 
     integer :: i, j, k, l, iml, ic, ip, iS
 
+    ! Give Cone an array size of 4 more then the number of grid points in the
+    ! radial direction.
+    ! Give RLAMBDA an array size eaqual to the number of grid points in the
+    ! picth angle dimension
     ALLOCATE(CONE(NR+4),RLAMBDA(NPA))
     CONE = 0.0; RLAMBDA = 0.0
 
-    ! Grid size of L shell
+    ! Grid size of L shell (in Earth Radii)
     DL1 = (RadiusMax - RadiusMin)/(nR - 1)
 
-    degrad=pi/180.
+    degrad=pi/180. ! constant which converts degrees to radians
     amla(1)=0. ! Magnetic latitude grid in degrees
     DO I=2,6
       amla(i)=amla(i-1)+0.2
@@ -397,33 +401,49 @@ MODULE ModRamInit
     DO I=7,24
       amla(i)=amla(i-1)+0.5
     ENDDO
-    DO I=25,Slen
+    DO I=25,Slen ! Slen is 55 defined in ModRamGrids.f90
       amla(i)=amla(i-1)+2.
     ENDDO
+    ! amla produces an array which goes form 0 to 72 as of commit
+    ! 10b4801d2d89e6fd663e248a46ecc4d65dd6fe11 (#368)
+    ! on the main LANL fork.
+    ! CBW note: Why does it stop short of 90 if it is suppose to be an array of
+    ! magnetic latitude?
+    !write(*,*) "amla:" ! debug print statements.
+    !write(*,*) amla
 
-    IR1=DL1/0.25
-    MDR=DL1*RE                  ! Grid size for Z=RO
+    IR1=DL1/0.25                ! IR1 is 1/4 the size of the radial step
+    MDR=DL1*RE                  ! Grid size (in meters) for Z=RO
     DO I=1,NR+1
-      LZ(I)=RadiusMin+(I-1)*DL1 ! Grid L-Shells
-      RLZ(I)=RE*LZ(I)           ! Grid radial distance
+      LZ(I)=RadiusMin+(I-1)*DL1 ! Grid L-Shells, there is a note in ram_init
+      ! that LZ defined simiarlly there (NR+1) is dangerous and should be changed.
+      RLZ(I)=RE*LZ(I)           ! Grid radial distance (from center of earth)
       DO IML=1,Slen
-        camlra=amla(iml)*degrad
+        camlra=amla(iml)*degrad ! radians of magnetic latitude.
         BE(I,IML)=0.32/LZ(I)**3*SQRT(1.+3.*SIN(camlra)**2)/COS(camlra)**6
       ENDDO
     END DO
+    !write(*,*) "LZ:"
+    !write(*,*) LZ
+    !write(*,*) "RLZ:"
+    !write(*,*) RLZ
+    ! BE is the magnetic feild of earth in the dipole approximation depending on
+    ! L-shell and equatorial pitch angle.
 
     DPHI=2.*PI/(NT-1)      ! Grid size for local time [rad]
     DO J=1,NT
       PHI(J)=(J-1)*DPHI    ! Magnetic local time in radian
       MLT(J)=PHI(J)*12./PI ! Magnetic local time in hour
     END DO
-    IP1=(MLT(2)-MLT(1))/0.5
+    IP1=(MLT(2)-MLT(1))/0.5 ! CBW note: IP1 is called in by two different
+    ! modules, but is used only in this line. Must be defined here for use elsewhere
 
     DO iS=1,nS
       RMAS(iS)=MP*species(iS)%s_mass ! rest mass of each species (kg)
     END DO
 
-    ! Calculate Kinetic Energy EKEV [keV] at cent, RW depends on NE
+    ! Calculate Kinetic Energy EKEV [keV] at center of energy bin, RW depends on
+    ! NE. Set the values of WE and RW based on initial value of ELB
     ELB=EnergyMin ! Lower limit of energy in keV
     IF (abs(ELB-0.01).le.1e-9) THEN
       WE(1)=2.8E-3 !  |_._|___.___|____.____|______.______|
@@ -438,97 +458,191 @@ MODULE ModRamInit
       RW=1.16
     END IF
 
-    EKEV(1)=ELB+0.5*WE(1)
-    GREL(S,1)=1.+EKEV(1)*1000.*Q/RMAS(S)/CS/CS
-    V(S,1)=CS*SQRT(GREL(S,1)**2-1.)/GREL(S,1)
-    EBND(1)=ELB+WE(1)
+    EKEV(1)=ELB+0.5*WE(1) ! set start of energy array in KeV based on
+    ! scale determined above. Q, Elementary Charge in Columb, CS is the speed of light,
+    ! RMAS array of size species-in-simulation contains rest mass for each species.
+    GREL(S,1)=1.+EKEV(1)*1000.*Q/RMAS(S)/CS/CS ! GREL has units of kC
+    V(S,1)=CS*SQRT(GREL(S,1)**2-1.)/GREL(S,1) ! velocity
+    EBND(1)=ELB+WE(1) !
     GRBND(S,1)=1.+EBND(1)*1000.*Q/RMAS(S)/CS/CS
     VBND(S,1)=CS*SQRT(GRBND(S,1)**2-1.)/GRBND(S,1)
     DO K=1,NE-1
       WE(K+1)=WE(K)*RW            ! WE(K) [keV] is a power series
       EBND(K+1)=EBND(K)+WE(K+1)   ! E[keV] at bound of grid
-      DE(K)=0.5*(WE(K)+WE(K+1))
-      EKEV(K+1)=EKEV(K)+DE(K)     ! E[keV] at cent of grid
+      DE(K)=0.5*(WE(K)+WE(K+1))   ! Average of WE(K) and WE(K+1)
+      EKEV(K+1)=EKEV(K)+DE(K)     ! E[keV] at center of grid
       GREL(S,K+1)=1.+EKEV(K+1)*1000.*Q/RMAS(S)/CS/CS
       V(S,K+1)=CS*SQRT(GREL(S,K+1)**2-1.)/GREL(S,K+1)      ! Veloc [m/s] at cent
       GRBND(S,K+1)=1.+EBND(K+1)*1000.*Q/RMAS(S)/CS/CS
       VBND(S,K+1)=CS*SQRT(GRBND(S,K+1)**2-1.)/GRBND(S,K+1) ! Veloc [m/s] at bound
     END DO
-    DE(NE)=0.5*WE(NE)*(1.+RW)
+    DE(NE)=0.5*WE(NE)*(1.+RW) ! manually handel last entry of DE
 
     ! CONE - pitch angle loss cone in degree
     ! Dipole loss cone. This needs to be changed in future version to support a
     ! non-dipole loss cone -ME
     DO I=1,NR
-      CLC=(RE+HMIN)/RLZ(I)
-      CONE(I)=ASIND(SQRT(CLC**3/SQRT(4.-3.*CLC)))
+      CLC=(RE+HMIN)/RLZ(I) ! HMIN is altitude of dense atmosphere (m), RLZ is
+      ! Grid radial distance (m), RE is earth radius in (m). CLC is inverse L-Shell
+      ! scaled by the raito of earth's radius to the radius of earth and its
+      ! dense atmosphere.
+      CONE(I)=ASIND(SQRT(CLC**3/SQRT(4.-3.*CLC))) ! Becuase of this angle values
+      ! now depend on radius resolution!
     END DO
+    !write(*,*) "Cone: Pre near boundary assignment"
+    !write(*,*) CONE
     CONE(NR+1)=2.5 ! to calcul PA grid near 0 deg
     CONE(NR+2)=1.5
     CONE(NR+3)=1.
-    CONE(NR+4)=0.
+    CONE(NR+4)=0. ! THIS GERENERATES A JUMP IN CONE! with current LANL values
+    ! CONE jumps back up from a lower value.
+    !write(*,*) "Cone: Post near boundary assignment"
+    !write(*,*) CONE
 
     ! PA is equatorial pitch angle in deg - PA(1)=90, PA(NPA)=0.
+    ! recall: NPA is the grid points in pitch angle dimension
     ! MU is cosine of equatorial PA
                          ! |_._|___.___|____.____|______.______|
                          !   MU    <  DMU   >    <     WMU     >
+
+    ! Goal of this if/else is to create several arrays: PA, and MU are explained
+    ! above, RWU is a fixed number used for scaling the WMU array (found only in
+    ! else portion), WMU same size as PA and MU, however contains explained
+    ! below. DMU(L) is the amount that MU must change from MU(L) to MU(L+1)
+    ! s.t. after NPA-1 steps MU has gone from 0 to 1.
     if (nPa == 90) then
+      write(*,*) "We are in If"
+      ! Define the first and last entires of the arrays PA and MU manually.
       PA(1)=90.
       MU(1)=0.
       PA(NPA)=0.
       MU(NPA)=1.
+      ! An unused scaling factor in the if case.
       RWU=0.98
-      WMU(1)=(MU(NPA)-MU(1))/nPa
+      ! WMU(1) is the resolution in cos of the array MU
+      ! i.e. WMU(L) is the value which should be added to MU(L) to produce MU(L+1)
+      WMU(1)=(MU(NPA)-MU(1))/nPa ! the entire WMU array is filled with this value.
+      ! This loop fills the remainder of the array WMU, DMU, MU, PA, and
+      ! defines the boundary values of MU and PA in the vars MUBOUN and Pabn
+      ! respectfully.
       DO L = 1, nPa-1
-        WMU(L+1)=WMU(L)
-        DMU(L)=0.5*(WMU(L)+WMU(L+1))
-        MU(L+1)=MU(L)+DMU(L)
-        PA(L+1)=ACOSD(MU(L+1))
-        MUBOUN = Mu(L) + 0.5*WMu(L)
-        Pabn(L) = ACOSD(MUBOUN)
+        WMU(L+1)=WMU(L) ! WMU is filled with a single value
+        DMU(L)=0.5*(WMU(L)+WMU(L+1)) ! Fill DMU with needed step of MU
+        MU(L+1)=MU(L)+DMU(L) ! apply needed step to MU(L) to reach MU(L+1)
+        PA(L+1)=ACOSD(MU(L+1)) ! ACOSD(MU(L+1)) : PA :: DMU : MU
+        MUBOUN = Mu(L) + 0.5*WMu(L) ! The value of MU on the boundary is
+        ! the value of MU next to the boundary + .5 the resolution of steps in
+        ! cos(angle).
+        Pabn(L) = ACOSD(MUBOUN) ! Despite PA(NPA) being defined above to have
+        ! PA(NPA) = 0, this DO loop will change PA(NPA) != 0. PAbn has a value
+        ! between PA(L) and PA(L+1). Therefore PAbn(NPA) = 0 (as it takes the last
+        ! half step that PA does not). Although PAbn(0) != 90 as PA(0) does.
       END DO
-      DMU(nPa) = 0.5*(wMu(nPa)+wMu(nPa-1))
-      Pabn(nPa) = 0.
+      DMU(nPa) = 0.5*(wMu(nPa)+wMu(nPa-1)) ! As the above loop cannot fill in
+      ! DMU as WMU(NPA+1) does not exist, its final value is filled by hand
+      ! using a reflection method for extending the array.
+
+      ! A whole bunch of debugging write statements.
+      !write(*,*) "MU:"
+      !write(*,*) MU
+      !write(*,*) "MUBOUN:"
+      !write(*,*) MUBOUN
+      !write(*,*) "PA:"
+      !write(*,*) PA
+      !write(*,*) "PAbn:"
+      !write(*,*) PAbn
+      !write(*,*) "DMU:"
+      !write(*,*) DMU
+      !write(*,*) "WMU:"
+      !write(*,*) WMU
+      Pabn(nPa) = 0. ! Although the above loop should ensure PAbn(NPA) = 0, it
+      ! is defined to be so here.
     else
+      !write(*,*) "We are in Else"
+      ! explictly set the boundary of PA and MU
       PA(1)=90.
       MU(1)=0.
       PA(NPA)=0.
       MU(NPA)=1.
+      ! RWU is a scaling factor applied to WMU so that the step from cos(angle)
+      ! is slightly less then what it should be.
       RWU=0.98
-      WMU(1)=(MU(NPA)-MU(1))/32
+      WMU(1)=(MU(NPA)-MU(1))/32 ! Array same size as PA
+      !write(*,*) "PA is about to call Acosd"
       DO L=1,46
         WMU(L+1)=WMU(L)*RWU
         DMU(L)=0.5*(WMU(L)+WMU(L+1))
         MU(L+1)=MU(L)+DMU(L)
         PA(L+1)=ACOSD(MU(L+1))
       END DO
-      PA(48)=18.7
-      MU(48)=COSD(PA(48))
-      DMU(47)=(MU(48)-MU(47))
-      IC=2
-      DO L=48,NPA-1
-        PA(L+1)=CONE(IC)
+      !write(*,*) "PA called Acosd with no crash"
+      ! Why is this being hardcoded, it effictively makes using an nPA less then
+      ! 49 impossible! As it makes using NPA != 72 difficult as these numbers are
+      ! adjusted for that value.
+      PA(48)=18.7 ! CBW note: This imples that the 48th step from 90 to a step
+      ! sort of 0 with 71 total steps is 18.7, but checking in python the 47th
+      ! entry (python is 0 based indexing) in an arry similar to PA is 31.25.
+      ! i.e. I think that assigning 18.7 to PA(48) is wrong.
+      MU(48)=COSD(PA(48)) ! manually assign MU(48) based on value of PA(48)
+      DMU(47)=(MU(48)-MU(47)) ! manually assign DMU(47) based on the step that
+      ! was taken (rather then building MU based on step size in DMU)
+      IC=2.
+      write(*,*) "IC:"
+      write(*,*) IC
+      DO L=48,NPA-1 ! Fill the rest of the arrays not already filled
+        PA(L+1)=CONE(IC) ! Start filling PA with values taken from the loss
+        ! cone array
         IF(L.EQ.49) THEN
-          PA(50)=16.
+          PA(50)=16. ! hard code this angle as well
         ELSE
+          ! This IFELSE block will slowly push IC to a value of SOMETHING, it
+          ! always crashes when IC is 25 (while NR = 20). ALSO this if and
+          ! else statement are behaving the same.
           if (IC.lt.nR) then
-             IC=IC+(nR-1)/19
+             !write(*,*) "we went to if"
+             IC=IC+(nR-1.)/19.
           else
+             !write(*,*) "we went to else"
              IC=IC+1
           endif
+          !write(*,*) "IC:"
+          !write(*,*) IC
         ENDIF
-        MU(L+1)=COSD(PA(L+1))
-        DMU(L)=(MU(L+1)-MU(L))       ! Grid size in cos pitch angle
+        MU(L+1)=COSD(PA(L+1)) ! define MU based on PA, filled from loss cone
+        DMU(L)=(MU(L+1)-MU(L))       ! Grid size in cos pitch angle again back fill
         WMU(L)=2.*(DMU(L-1)-0.5*WMU(L-1))
-        IF (L.GT.55) WMU(L)=0.5*(DMU(L)+DMU(L-1))
+        IF (L.GT.55) WMU(L)=0.5*(DMU(L)+DMU(L-1)) ! 55 is the value of Slen
       END DO
       DMU(NPA)=DMU(NPA-1)
       WMU(NPA)=DMU(NPA-1)
+      ! When RadiusMax is not 6.5 the following DO loop will cause
+      ! a crash durning the initilization step as it will eventually pass
+      ! a value to acosd greater then 1. Currently the loop will not cause a
+      ! crash if 5.5 < RadiusMax < 7.0. The crash does not happen after a
+      ! consistent number of calls to acosd, sometimes only ~10 calls are made
+      ! before passing an invaild value, others ~40 calls occur before a crash.
+      !write(*,*) "PA:"
+      !write(*,*) PA
+      !write(*,*) "PAbn is about to call acosd"
       DO L=1,NPA-1
         MUBOUN=MU(L)+0.5*WMU(L)
         PAbn(L)=ACOSD(MUBOUN) ! PA at boundary of grid
       ENDDO
       PAbn(NPA)=0.
+      !write(*,*) " PAbn called acosd rightly"
+      ! A whole bunch of debugging write statements.
+      !write(*,*) "MU:"
+      !write(*,*) MU
+      !write(*,*) "MUBOUN:"
+      !write(*,*) MUBOUN
+      !write(*,*) "PA:"
+      !write(*,*) PA
+      !write(*,*) "PAbn:"
+      !write(*,*) PAbn
+      !write(*,*) "DMU:"
+      !write(*,*) DMU
+      !write(*,*) "WMU:"
+      !write(*,*) WMU
     endif
 
     ! Determine the range of NPA such that PA is outside the loss cone:

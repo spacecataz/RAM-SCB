@@ -13,7 +13,7 @@ Module ModRamGrids
 
   !!! RAM Grids
   integer :: nS       = 4,   &  ! number of species to run
-             NR       = 20,  &  ! grid points in radial direction
+             NR       = 40,  &  ! grid points in radial direction
              NT       = 25,  &  ! grid points in local time direction
              NE       = 35,  &  ! number of energy bins
              NPA      = 72,  &  ! grid points in pitch angle dimension
@@ -21,6 +21,7 @@ Module ModRamGrids
              NEL_prot = 36,  &  ! Energy bins in bound file for protons (SWMF or LANL)
              NBD      = 288, &  ! Number of boundary data per file = (12/hour)*(24 hours)
              NTL      = 49      ! MLT bins for SWMF or LANL grid (25 for LANL, 49 for SWMF)
+
   integer, parameter :: NL       = 35,  &  ! grid points in radial for PLANE.F
                         NLT      = 48      ! grid points in local time for PLANE.F
 
