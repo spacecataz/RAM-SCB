@@ -401,6 +401,12 @@ MODULE ModRamDrift
     ALLOCATE(FBND(nPa),F(nPa))
     FBND = 0.0; F = 0.0
 
+    write(*,*) ""
+    write(*,*) ""
+    write(*,*) ""
+    write(*,*) "DMU:"
+    write(*,*) DMU
+
     DtDriftMu(S) = 10000.0
     OME=7.3E-5
     DO K=1,NE
@@ -438,6 +444,8 @@ MODULE ModRamDrift
                    DtDriftMu(S)=min(DtDriftMu(S),FracCFL*DTs*DMU(L)/ctemp)
                    write(*,*) "FracCFL:"
                    write(*,*) FracCFL
+                   write(*,*) "DTs"
+                   write(*,*) DTs
                    write(*,*) "DMU(L):"
                    write(*,*) DMU(L)
                    write(*,*) "ctemp:"
@@ -445,6 +453,12 @@ MODULE ModRamDrift
                 endif
                 write(*,*) "DtDriftMu after function:"
                 write(*,*) DtDriftMu
+                write(*,*) ""
+                write(*,*) ""
+                write(*,*) ""
+                write(*,*) ""
+                write(*,*) ""
+                write(*,*) ""
                 ISGM = 1
                 if (CDriftMu(I,J,K,L).lt.0.0) ISGM = -1
                 if (L.LE.NPA-2) then

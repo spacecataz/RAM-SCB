@@ -633,8 +633,8 @@ MODULE ModRamInit
       !write(*,*) PA
       !write(*,*) "PAbn:"
       !write(*,*) PAbn
-      !write(*,*) "DMU:"
-      !write(*,*) DMU
+      write(*,*) "DMU After Initialzation  :"
+      write(*,*) DMU
       !write(*,*) "WMU:"
       !write(*,*) WMU
       !write(*,*) "PAbn is about to call acosd"
