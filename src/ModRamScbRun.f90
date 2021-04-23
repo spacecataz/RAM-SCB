@@ -15,7 +15,7 @@ MODULE ModRamScbRun
     use ModRamVariables, ONLY: Kp, F107, AE, dBdt, dIdt, dIbndt
     use ModScbVariables, ONLY: hICalc, SORFail
     use ModScbParams,    ONLY: method
-    
+
     !!!! Module Subroutines and Functions
     use ModRamGSL,       ONLY: GSL_Initialize
     use ModRamFunctions, ONLY: ram_sum_pressure, RamFileName
@@ -32,16 +32,16 @@ MODULE ModRamScbRun
     use ModScbIO,        ONLY: computational_domain
     use ModSceInit,      ONLY: sce_allocate, sce_init, sce_deallocate
     use ModRamScb,       ONLY: ramscb_allocate, computehI, ramscb_deallocate, compute3DFlux
-    
+
     !!!! External Modules (share/Library/src)
     use ModReadParam
     use CON_planet,      ONLY: set_planet_defaults
     use CON_axes,        ONLY: init_axes, test_axes
     use ModPlanetConst,  ONLY: init_planet_const
     use ModTimeConvert,  ONLY: time_real_to_int
-    
+
     implicit none
-    
+
     logical :: triggerSCB
     real(DP) :: DtOutputMax, DtEndMax
 !----------------------------------------------------------------------------
@@ -49,15 +49,34 @@ MODULE ModRamScbRun
     UTs = TimeRamElapsed + TimeRamStart%iHour*3600.0
     ! Set the half-timestep based on CFL, SWMF, and Maximum allowed.
     ! Use CFL Number if #VARIABLEDT is set in PARAM file.
+    write(*,*) "DoVarDt:"
+    write(*,*) DoVarDt
     if (DoVarDt) then
        DtEndMax   = (TimeMax-TimeRamElapsed)/2.0
        DtOutputMax = max_output_timestep(TimeRamElapsed)
        DTs = min(DTsNext,DTsmax,DtOutputMax,DtEndMax,DTsFramework)
+
+       write(*,*) "DTsNext:"
+       write(*,*) DTsNext
+       write(*,*) "DTsmax:"
+       write(*,*) DTsmax
+       write(*,*) "DtOutputMax:"
+       write(*,*) DtOutputMax
+       write(*,*) "DtEndMax:"
+       write(*,*) DtEndMax
+       write(*,*) "DTsFramework:"
+       write(*,*) DTsFramework
+
+       write(*,*) "if DTs:"
+       write(*,*) DTs
+
        if (Kp.gt.6.0 .AND. DTs.gt.5.0) DTs = 5.0
     else if(abs(mod(UTs, Dt_hI)) .le. 1e-9) then
        DTs = 5.0
        if(Kp .ge. 5.0) DTs = min(DTsMin,DTs)
        if(Kp .gt. 6.0) DTs = 1.0   !1. or 0.25
+       write(*,*) "else DTs:"
+       write(*,*) DTs
     endif
     DTsNext = DTsmax
 !!!!!!!!

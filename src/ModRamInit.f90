@@ -409,8 +409,8 @@ MODULE ModRamInit
     ! on the main LANL fork.
     ! CBW note: Why does it stop short of 90 if it is suppose to be an array of
     ! magnetic latitude?
-    write(*,*) "amla:" ! debug print statements.
-    write(*,*) amla
+    !write(*,*) "amla:" ! debug print statements.
+    !write(*,*) amla
 
     IR1=DL1/0.25                ! IR1 is 1/4 the size of the radial step
     MDR=DL1*RE                  ! Grid size (in meters) for Z=RO
@@ -423,10 +423,10 @@ MODULE ModRamInit
         BE(I,IML)=0.32/LZ(I)**3*SQRT(1.+3.*SIN(camlra)**2)/COS(camlra)**6
       ENDDO
     END DO
-    write(*,*) "LZ:"
-    write(*,*) LZ
-    write(*,*) "RLZ:"
-    write(*,*) RLZ
+    !write(*,*) "LZ:"
+    !write(*,*) LZ
+    !write(*,*) "RLZ:"
+    !write(*,*) RLZ
     ! BE is the magnetic feild of earth in the dipole approximation depending on
     ! L-shell and equatorial pitch angle.
 
@@ -496,8 +496,8 @@ MODULE ModRamInit
     CONE(NR+3)=1.
     CONE(NR+4)=0. ! THIS GERENERATES A JUMP IN CONE! with current LANL values
     ! CONE jumps back up from a lower value.
-    write(*,*) "Cone: Post near boundary assignment"
-    write(*,*) CONE
+    !write(*,*) "Cone: Post near boundary assignment"
+    !write(*,*) CONE
 
     ! PA is equatorial pitch angle in deg - PA(1)=90, PA(NPA)=0.
     ! recall: NPA is the grid points in pitch angle dimension
@@ -511,7 +511,7 @@ MODULE ModRamInit
     ! below. DMU(L) is the amount that MU must change from MU(L) to MU(L+1)
     ! s.t. after NPA-1 steps MU has gone from 0 to 1.
     if (nPa == 90) then
-      write(*,*) "We are in If"
+      !write(*,*) "We are in If"
       ! Define the first and last entires of the arrays PA and MU manually.
       PA(1)=90.
       MU(1)=0.
@@ -543,18 +543,18 @@ MODULE ModRamInit
       ! using a reflection method for extending the array.
 
       ! A whole bunch of debugging write statements.
-      write(*,*) "MU:"
-      write(*,*) MU
-      write(*,*) "MUBOUN:"
-      write(*,*) MUBOUN
-      write(*,*) "PA:"
-      write(*,*) PA
-      write(*,*) "PAbn:"
-      write(*,*) PAbn
-      write(*,*) "DMU:"
-      write(*,*) DMU
-      write(*,*) "WMU:"
-      write(*,*) WMU
+      !write(*,*) "MU:"
+      !write(*,*) MU
+      !write(*,*) "MUBOUN:"
+      !write(*,*) MUBOUN
+      !write(*,*) "PA:"
+      !write(*,*) PA
+      !write(*,*) "PAbn:"
+      !write(*,*) PAbn
+      !write(*,*) "DMU:"
+      !write(*,*) DMU
+      !write(*,*) "WMU:"
+      !write(*,*) WMU
       Pabn(nPa) = 0. ! Although the above loop should ensure PAbn(NPA) = 0, it
       ! is defined to be so here.
     else
@@ -568,14 +568,14 @@ MODULE ModRamInit
       ! is slightly less then what it should be.
       RWU=0.98
       WMU(1)=(MU(NPA)-MU(1))/32 ! Array same size as PA
-      write(*,*) "PA is about to call Acosd for first portion of array"
+      !write(*,*) "PA is about to call Acosd for first portion of array"
       DO L=1,46
         WMU(L+1)=WMU(L)*RWU
         DMU(L)=0.5*(WMU(L)+WMU(L+1))
         MU(L+1)=MU(L)+DMU(L)
         PA(L+1)=ACOSD(MU(L+1))
       END DO
-      write(*,*) "PA called Acosd with no crash"
+      !write(*,*) "PA called Acosd with no crash"
       ! Why is this being hardcoded, it effictively makes using an nPA less then
       ! 49 impossible! As it makes using NPA != 72 difficult as these numbers are
       ! adjusted for that value.
@@ -587,8 +587,8 @@ MODULE ModRamInit
       DMU(47)=(MU(48)-MU(47)) ! manually assign DMU(47) based on the step that
       ! was taken (rather then building MU based on step size in DMU)
       IC=2.
-      write(*,*) "IC:"
-      write(*,*) IC
+      !write(*,*) "IC:"
+      !write(*,*) IC
       DO L=48,NPA-1 ! Fill the rest of the arrays not already filled
         PA(L+1)=CONE(IC) ! Start filling PA with values taken from the loss
         ! cone array
@@ -606,8 +606,8 @@ MODULE ModRamInit
              !write(*,*) "we went to else"
              IC=IC+1
           endif
-          write(*,*) "IC:"
-          write(*,*) IC
+          !write(*,*) "IC:"
+          !write(*,*) IC
         ENDIF
         MU(L+1)=COSD(PA(L+1)) ! define MU based on PA, filled from loss cone
         DMU(L)=(MU(L+1)-MU(L))       ! Grid size in cos pitch angle again back fill
@@ -622,22 +622,22 @@ MODULE ModRamInit
       ! crash if 5.5 < RadiusMax < 7.0. The crash does not happen after a
       ! consistent number of calls to acosd, sometimes only ~10 calls are made
       ! before passing an invaild value, others ~40 calls occur before a crash.
-      write(*,*) "Post IC Loop PA:"
-      write(*,*) PA
+      !write(*,*) "Post IC Loop PA:"
+      !write(*,*) PA
       ! A whole bunch of debugging write statements.
-      write(*,*) "MU:"
-      write(*,*) MU
-      write(*,*) "MUBOUN:"
-      write(*,*) MUBOUN
+      !write(*,*) "MU:"
+      !write(*,*) MU
+      !write(*,*) "MUBOUN:"
+      !write(*,*) MUBOUN
       !write(*,*) "PA:"
       !write(*,*) PA
-      write(*,*) "PAbn:"
-      write(*,*) PAbn
-      write(*,*) "DMU:"
-      write(*,*) DMU
-      write(*,*) "WMU:"
-      write(*,*) WMU
-      write(*,*) "PAbn is about to call acosd"
+      !write(*,*) "PAbn:"
+      !write(*,*) PAbn
+      !write(*,*) "DMU:"
+      !write(*,*) DMU
+      !write(*,*) "WMU:"
+      !write(*,*) WMU
+      !write(*,*) "PAbn is about to call acosd"
       DO L=1,NPA-1
         MUBOUN=MU(L)+0.5*WMU(L)
         if (MUBOUN.gt.1) then
@@ -648,7 +648,7 @@ MODULE ModRamInit
         PAbn(L)=ACOSD(MUBOUN) ! PA at boundary of grid
       ENDDO
       PAbn(NPA)=0.
-      write(*,*) " PAbn called acosd rightly"
+      !write(*,*) " PAbn called acosd rightly"
 
     endif
 

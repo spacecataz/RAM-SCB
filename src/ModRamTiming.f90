@@ -208,7 +208,8 @@ module ModRamTiming
          DtW_MAGxyz  -mod(TimeIn, DtW_MAGxyz  ), &
          DtW_2DFlux  -mod(TimeIn, DtW_2DFlux  ), &
          DtW_Losses  -mod(TimeIn, DtW_Losses  )) / 2.0
-
+    !write(*,*) "max_output_timestep:"
+    !write(*,*) max_output_timestep
     if(DoTestMe)then
        write(*,'(2a,f11.2,a)')NameSub,' using these values at t=',TimeIn,':'
        write(*,'(a,f8.2)')'    DtLogfile=',DtLogfile
