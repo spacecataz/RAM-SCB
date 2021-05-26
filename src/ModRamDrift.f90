@@ -401,12 +401,6 @@ MODULE ModRamDrift
     ALLOCATE(FBND(nPa),F(nPa))
     FBND = 0.0; F = 0.0
 
-    write(*,*) ""
-    write(*,*) ""
-    write(*,*) ""
-    write(*,*) "DMU:"
-    write(*,*) DMU
-
     DtDriftMu(S) = 10000.0
     OME=7.3E-5
     DO K=1,NE
@@ -437,28 +431,10 @@ MODULE ModRamDrift
                 dBdt2   = dBdt(I,J)/2./BNES(I,J)*RLZ(I)
                 dIbndt2 = dIbndt(I,J,L)*RLZ(I)/BOUNIS(I,J,L)
                 CDriftMu(I,J,K,L) = -CMUDOT*((GMR1+GMR2+GMR3)*DRDM+(GMP1+GMP2)*DPDM+dBdt2+dIbndt2)
-                write(*,*) "DtDriftMu before function:"
-                write(*,*) DtDriftMu
                 if (outsideMGNP(i,j) == 0) then
                    ctemp = max(abs(CDriftMu(I,J,K,L)),1E-32)
                    DtDriftMu(S)=min(DtDriftMu(S),FracCFL*DTs*DMU(L)/ctemp)
-                   write(*,*) "FracCFL:"
-                   write(*,*) FracCFL
-                   write(*,*) "DTs"
-                   write(*,*) DTs
-                   write(*,*) "DMU(L):"
-                   write(*,*) DMU(L)
-                   write(*,*) "ctemp:"
-                   write(*,*) ctemp
                 endif
-                write(*,*) "DtDriftMu after function:"
-                write(*,*) DtDriftMu
-                write(*,*) ""
-                write(*,*) ""
-                write(*,*) ""
-                write(*,*) ""
-                write(*,*) ""
-                write(*,*) ""
                 ISGM = 1
                 if (CDriftMu(I,J,K,L).lt.0.0) ISGM = -1
                 if (L.LE.NPA-2) then

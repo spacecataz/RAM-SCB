@@ -542,19 +542,6 @@ MODULE ModRamInit
       ! DMU as WMU(NPA+1) does not exist, its final value is filled by hand
       ! using a reflection method for extending the array.
 
-      ! A whole bunch of debugging write statements.
-      !write(*,*) "MU:"
-      !write(*,*) MU
-      !write(*,*) "MUBOUN:"
-      !write(*,*) MUBOUN
-      !write(*,*) "PA:"
-      !write(*,*) PA
-      !write(*,*) "PAbn:"
-      !write(*,*) PAbn
-      !write(*,*) "DMU:"
-      !write(*,*) DMU
-      !write(*,*) "WMU:"
-      !write(*,*) WMU
       Pabn(nPa) = 0. ! Although the above loop should ensure PAbn(NPA) = 0, it
       ! is defined to be so here.
     else
@@ -622,22 +609,6 @@ MODULE ModRamInit
       ! crash if 5.5 < RadiusMax < 7.0. The crash does not happen after a
       ! consistent number of calls to acosd, sometimes only ~10 calls are made
       ! before passing an invaild value, others ~40 calls occur before a crash.
-      !write(*,*) "Post IC Loop PA:"
-      !write(*,*) PA
-      ! A whole bunch of debugging write statements.
-      !write(*,*) "MU:"
-      !write(*,*) MU
-      !write(*,*) "MUBOUN:"
-      !write(*,*) MUBOUN
-      !write(*,*) "PA:"
-      !write(*,*) PA
-      !write(*,*) "PAbn:"
-      !write(*,*) PAbn
-      write(*,*) "DMU After Initialzation  :"
-      write(*,*) DMU
-      !write(*,*) "WMU:"
-      !write(*,*) WMU
-      !write(*,*) "PAbn is about to call acosd"
       DO L=1,NPA-1
         MUBOUN=MU(L)+0.5*WMU(L)
         if (MUBOUN.gt.1) then
@@ -648,8 +619,59 @@ MODULE ModRamInit
         PAbn(L)=ACOSD(MUBOUN) ! PA at boundary of grid
       ENDDO
       PAbn(NPA)=0.
-      !write(*,*) " PAbn called acosd rightly"
-
+      write(*,*) "Print Statements form SWF_FILES make test1 of value of variables in src/ModRamInit.ARRAYS (f90)"
+      write(*,*) "DL1"
+      write(*,*) DL1
+      write(*,*) "amla"
+      write(*,*) amla
+      write(*,*) "MDR"
+      write(*,*) MDR
+      write(*,*) "camlra"
+      write(*,*) camlra
+      write(*,*) "BE"
+      write(*,*) BE
+      write(*,*) "LZ, the wise"
+      write(*,*) LZ
+      write(*,*) "RLZ, the mystierous"
+      write(*,*) RLZ
+      write(*,*) "DPHI"
+      write(*,*) DPHI
+      write(*,*) "PHI"
+      write(*,*) PHI
+      write(*,*) "MLT"
+      write(*,*) MLT
+      write(*,*) "ELB"
+      write(*,*) ELB
+      write(*,*) "WE"
+      write(*,*) WE
+      write(*,*) "RW"
+      write(*,*) RW
+      write(*,*) "EKEV"
+      write(*,*) EKEV
+      write(*,*) "GREL"
+      write(*,*) GREL
+      write(*,*) "V"
+      write(*,*) V
+      write(*,*) "EBND"
+      write(*,*) EBND
+      write(*,*) "GRBND"
+      write(*,*) GRBND
+      write(*,*) "VBND"
+      write(*,*) VBND
+      write(*,*) "DE"
+      write(*,*) DE
+      write(*,*) "CONE, the dumb"
+      write(*,*) CONE
+      write(*,*) "PA"
+      write(*,*) PA
+      write(*,*) "MU"
+      write(*,*) MU
+      write(*,*) "WMU"
+      write(*,*) WMU
+      write(*,*) "DMU"
+      write(*,*) DMU
+      write(*,*) "PAbn"
+      write(*,*) PAbn
     endif
 
     ! Determine the range of NPA such that PA is outside the loss cone:
