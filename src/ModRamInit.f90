@@ -423,6 +423,8 @@ MODULE ModRamInit
         BE(I,IML)=0.32/LZ(I)**3*SQRT(1.+3.*SIN(camlra)**2)/COS(camlra)**6
       ENDDO
     END DO
+    write(*,*) "degrad"
+    write(*,*) degrad
     !write(*,*) "LZ:"
     !write(*,*) LZ
     !write(*,*) "RLZ:"
@@ -457,7 +459,7 @@ MODULE ModRamInit
       WE(1)=0.31
       RW=1.16
     END IF
-
+3
     EKEV(1)=ELB+0.5*WE(1) ! set start of energy array in KeV based on
     ! scale determined above. Q, Elementary Charge in Columb, CS is the speed of light,
     ! RMAS array of size species-in-simulation contains rest mass for each species.
@@ -491,7 +493,7 @@ MODULE ModRamInit
     END DO
     !write(*,*) "Cone: Pre near boundary assignment"
     !write(*,*) CONE
-    CONE(NR+1)=2.5 ! to calcul PA grid near 0 deg
+    CONE(NR+1)=2.5 ! to calcul PA grid near 0 deg 2.5 1.5 1 0
     CONE(NR+2)=1.5
     CONE(NR+3)=1.
     CONE(NR+4)=0. ! THIS GERENERATES A JUMP IN CONE! with current LANL values
@@ -574,8 +576,8 @@ MODULE ModRamInit
       DMU(47)=(MU(48)-MU(47)) ! manually assign DMU(47) based on the step that
       ! was taken (rather then building MU based on step size in DMU)
       IC=2.
-      !write(*,*) "IC:"
-      !write(*,*) IC
+      write(*,*) "IC:"
+      write(*,*) IC
       DO L=48,NPA-1 ! Fill the rest of the arrays not already filled
         PA(L+1)=CONE(IC) ! Start filling PA with values taken from the loss
         ! cone array
@@ -593,8 +595,8 @@ MODULE ModRamInit
              !write(*,*) "we went to else"
              IC=IC+1
           endif
-          !write(*,*) "IC:"
-          !write(*,*) IC
+          write(*,*) "IC:"
+          write(*,*) IC
         ENDIF
         MU(L+1)=COSD(PA(L+1)) ! define MU based on PA, filled from loss cone
         DMU(L)=(MU(L+1)-MU(L))       ! Grid size in cos pitch angle again back fill
@@ -619,59 +621,59 @@ MODULE ModRamInit
         PAbn(L)=ACOSD(MUBOUN) ! PA at boundary of grid
       ENDDO
       PAbn(NPA)=0.
-      write(*,*) "Print Statements form SWF_FILES make test1 of value of variables in src/ModRamInit.ARRAYS (f90)"
-      write(*,*) "DL1"
-      write(*,*) DL1
-      write(*,*) "amla"
-      write(*,*) amla
-      write(*,*) "MDR"
-      write(*,*) MDR
-      write(*,*) "camlra"
-      write(*,*) camlra
-      write(*,*) "BE"
-      write(*,*) BE
-      write(*,*) "LZ, the wise"
-      write(*,*) LZ
-      write(*,*) "RLZ, the mystierous"
-      write(*,*) RLZ
-      write(*,*) "DPHI"
-      write(*,*) DPHI
-      write(*,*) "PHI"
-      write(*,*) PHI
-      write(*,*) "MLT"
-      write(*,*) MLT
-      write(*,*) "ELB"
-      write(*,*) ELB
-      write(*,*) "WE"
-      write(*,*) WE
-      write(*,*) "RW"
-      write(*,*) RW
-      write(*,*) "EKEV"
-      write(*,*) EKEV
-      write(*,*) "GREL"
-      write(*,*) GREL
-      write(*,*) "V"
-      write(*,*) V
-      write(*,*) "EBND"
-      write(*,*) EBND
-      write(*,*) "GRBND"
-      write(*,*) GRBND
-      write(*,*) "VBND"
-      write(*,*) VBND
-      write(*,*) "DE"
-      write(*,*) DE
-      write(*,*) "CONE, the dumb"
-      write(*,*) CONE
-      write(*,*) "PA"
-      write(*,*) PA
-      write(*,*) "MU"
-      write(*,*) MU
-      write(*,*) "WMU"
-      write(*,*) WMU
-      write(*,*) "DMU"
-      write(*,*) DMU
-      write(*,*) "PAbn"
-      write(*,*) PAbn
+      !write(*,*) "Print Statements form SWF_FILES make test1 of value of variables in src/ModRamInit.ARRAYS (f90)"
+      !write(*,*) "DL1"
+      !!write(*,*) DL1
+      !write(*,*) "amla"
+      !write(*,*) "MDR"
+      !write(*,*) MDR
+      !write(*,*) "camlra"
+      !write(*,*) camlra
+      !!!!!write(*,*) amla
+      !write(*,*) "BE"
+      !write(*,*) BE
+      !write(*,*) LZ
+      !!write(*,*) "LZ, the wise"
+      !write(*,*) "RLZ, the mystierous"
+      !write(*,*) RLZ
+      !write(*,*) "DPHI"
+      !write(*,*) DPHI
+      !write(*,*) "PHI"
+      !write(*,*) PHI
+      !write(*,*) "MLT"
+      !write(*,*) MLT
+      !write(*,*) "ELB"
+      !write(*,*) ELB
+      !write(*,*) "WE"
+      !write(*,*) WE
+      !write(*,*) "RW"
+      !write(*,*) RW
+      !write(*,*) "EKEV"
+      !write(*,*) EKEV
+      !write(*,*) "GREL"
+      !write(*,*) GREL
+      !write(*,*) "V"
+      !write(*,*) V
+      !write(*,*) "EBND"
+      !write(*,*) EBND
+      !write(*,*) "GRBND"
+      !write(*,*) GRBND
+      !write(*,*) "VBND"
+      !write(*,*) VBND
+      !write(*,*) "DE"
+      !write(*,*) DE
+      !write(*,*) "CONE, the dumb"
+      !write(*,*) CONE
+      !write(*,*) "PA"
+      !write(*,*) PA
+      !write(*,*) "MU"
+      !write(*,*) MU
+      !write(*,*) "WMU"
+      !write(*,*) WMU
+      !write(*,*) "DMU"
+      !write(*,*) DMU
+      !write(*,*) "PAbn"
+      !write(*,*) PAbn
     endif
 
     ! Determine the range of NPA such that PA is outside the loss cone:
