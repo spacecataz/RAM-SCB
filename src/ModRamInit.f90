@@ -459,7 +459,7 @@ MODULE ModRamInit
       WE(1)=0.31
       RW=1.16
     END IF
-3
+
     EKEV(1)=ELB+0.5*WE(1) ! set start of energy array in KeV based on
     ! scale determined above. Q, Elementary Charge in Columb, CS is the speed of light,
     ! RMAS array of size species-in-simulation contains rest mass for each species.
