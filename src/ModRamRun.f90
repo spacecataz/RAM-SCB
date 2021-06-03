@@ -198,22 +198,22 @@ MODULE ModRamRun
     !write(*,*)  DtsNext
 
     DtsNext = min(minval(DtDriftR), minval(DtDriftP), minval(DtDriftE), minval(DtDriftMu))
-    !write(*,*) "minval(DtDriftR):"
-    !write(*,*)  minval(DtDriftR)
-    !write(*,*) "minval(DtDriftP):"
-    !write(*,*)  minval(DtDriftP)
-    !write(*,*) "minval(DtDriftE)"
-    !write(*,*)  minval(DtDriftE)
-    !write(*,*) "minval(DtDriftMu):"
-    !write(*,*)  minval(DtDriftMu)
-    !write(*,*) "DtsNext after min function:"
-    !write(*,*)  DtsNext
+    write(*,*) "minval(DtDriftR):"
+    write(*,*)  minval(DtDriftR)
+    write(*,*) "minval(DtDriftP):"
+    write(*,*)  minval(DtDriftP)
+    write(*,*) "minval(DtDriftE)"
+    write(*,*)  minval(DtDriftE)
+    write(*,*) "minval(DtDriftMu):"
+    write(*,*)  minval(DtDriftMu)
+    write(*,*) "DtsNext after min function:"
+    write(*,*)  DtsNext
     DtsNext = max(DtsNext, DtsMin)
-    !write(*,*) "DtsMin:"
-    !write(*,*)  DtsMin
+    write(*,*) "DtsMin:"
+    write(*,*)  DtsMin
 
-    !write(*,*) "DtsNext final function:"
-    !write(*,*)  DtsNext
+    write(*,*) "DtsNext final function:"
+    write(*,*)  DtsNext
 
     ! Update flux and pressure totals
     DO iS = 1,nS

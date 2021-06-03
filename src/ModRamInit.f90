@@ -621,59 +621,59 @@ MODULE ModRamInit
         PAbn(L)=ACOSD(MUBOUN) ! PA at boundary of grid
       ENDDO
       PAbn(NPA)=0.
-      !write(*,*) "Print Statements form SWF_FILES make test1 of value of variables in src/ModRamInit.ARRAYS (f90)"
-      !write(*,*) "DL1"
-      !!write(*,*) DL1
-      !write(*,*) "amla"
-      !write(*,*) "MDR"
-      !write(*,*) MDR
-      !write(*,*) "camlra"
-      !write(*,*) camlra
-      !!!!!write(*,*) amla
-      !write(*,*) "BE"
-      !write(*,*) BE
-      !write(*,*) LZ
-      !!write(*,*) "LZ, the wise"
-      !write(*,*) "RLZ, the mystierous"
-      !write(*,*) RLZ
-      !write(*,*) "DPHI"
-      !write(*,*) DPHI
-      !write(*,*) "PHI"
-      !write(*,*) PHI
-      !write(*,*) "MLT"
-      !write(*,*) MLT
-      !write(*,*) "ELB"
-      !write(*,*) ELB
-      !write(*,*) "WE"
-      !write(*,*) WE
-      !write(*,*) "RW"
-      !write(*,*) RW
-      !write(*,*) "EKEV"
-      !write(*,*) EKEV
-      !write(*,*) "GREL"
-      !write(*,*) GREL
-      !write(*,*) "V"
-      !write(*,*) V
-      !write(*,*) "EBND"
-      !write(*,*) EBND
-      !write(*,*) "GRBND"
-      !write(*,*) GRBND
-      !write(*,*) "VBND"
-      !write(*,*) VBND
-      !write(*,*) "DE"
-      !write(*,*) DE
-      !write(*,*) "CONE, the dumb"
-      !write(*,*) CONE
-      !write(*,*) "PA"
-      !write(*,*) PA
-      !write(*,*) "MU"
-      !write(*,*) MU
-      !write(*,*) "WMU"
-      !write(*,*) WMU
-      !write(*,*) "DMU"
-      !write(*,*) DMU
-      !write(*,*) "PAbn"
-      !write(*,*) PAbn
+      write(*,*) "Print Statements form SWF_FILES make test1 of value of variables in src/ModRamInit.ARRAYS (f90)"
+      write(*,*) "DL1"
+      write(*,*) DL1
+      write(*,*) "amla"
+      write(*,*) "MDR"
+      write(*,*) MDR
+      write(*,*) "camlra"
+      write(*,*) camlra
+      write(*,*) amla
+      write(*,*) "BE"
+      write(*,*) BE
+      write(*,*) "LZ, the wise"
+      write(*,*) LZ
+      write(*,*) "RLZ, the mystierous"
+      write(*,*) RLZ
+      write(*,*) "DPHI"
+      write(*,*) DPHI
+      write(*,*) "PHI"
+      write(*,*) PHI
+      write(*,*) "MLT"
+      write(*,*) MLT
+      write(*,*) "ELB"
+      write(*,*) ELB
+      write(*,*) "WE"
+      write(*,*) WE
+      write(*,*) "RW"
+      write(*,*) RW
+      write(*,*) "EKEV"
+      write(*,*) EKEV
+      write(*,*) "GREL"
+      write(*,*) GREL
+      write(*,*) "V"
+      write(*,*) V
+      write(*,*) "EBND"
+      write(*,*) EBND
+      write(*,*) "GRBND"
+      write(*,*) GRBND
+      write(*,*) "VBND"
+      write(*,*) VBND
+      write(*,*) "DE"
+      write(*,*) DE
+      write(*,*) "CONE, the dumb"
+      write(*,*) CONE
+      write(*,*) "PA"
+      write(*,*) PA
+      write(*,*) "MU"
+      write(*,*) MU
+      write(*,*) "WMU"
+      write(*,*) WMU
+      write(*,*) "DMU"
+      write(*,*) DMU
+      write(*,*) "PAbn"
+      write(*,*) PAbn
     endif
 
     ! Determine the range of NPA such that PA is outside the loss cone:

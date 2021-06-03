@@ -56,19 +56,19 @@ MODULE ModRamScbRun
        DtOutputMax = max_output_timestep(TimeRamElapsed)
        DTs = min(DTsNext,DTsmax,DtOutputMax,DtEndMax,DTsFramework)
 
-       write(*,*) "DTsNext:"
-       write(*,*) DTsNext
-       write(*,*) "DTsmax:"
-       write(*,*) DTsmax
-       write(*,*) "DtOutputMax:"
-       write(*,*) DtOutputMax
-       write(*,*) "DtEndMax:"
-       write(*,*) DtEndMax
-       write(*,*) "DTsFramework:"
-       write(*,*) DTsFramework
+       !write(*,*) "DTsNext:"
+       !write(*,*) DTsNext
+       !write(*,*) "DTsmax:"
+       !write(*,*) DTsmax
+       !write(*,*) "DtOutputMax:"
+       !write(*,*) DtOutputMax
+       !write(*,*) "DtEndMax:"
+       !write(*,*) DtEndMax
+       !write(*,*) "DTsFramework:"
+       !write(*,*) DTsFramework
 
-       write(*,*) "if DTs:"
-       write(*,*) DTs
+       !write(*,*) "if DTs:"
+       !write(*,*) DTs
 
        if (Kp.gt.6.0 .AND. DTs.gt.5.0) DTs = 5.0
     else if(abs(mod(UTs, Dt_hI)) .le. 1e-9) then
